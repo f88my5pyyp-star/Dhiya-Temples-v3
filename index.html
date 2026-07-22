@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dhiya Temples</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .interactive-element {
+            transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+        .interactive-element:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body class="bg-[#0f071c] text-white font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-purple-500 selection:text-white">
+
+    <!-- Top Header -->
+    <header class="p-4 flex justify-between items-center border-b border-purple-900/40">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-200 p-0.5 shadow-lg shadow-amber-500/20">
+                <div class="w-full h-full bg-[#160b24] rounded-[10px] flex items-center justify-center">
+                    <i class="fa-solid fa-gopuram text-amber-400 text-sm"></i>
+                </div>
+            </div>
+            <h1 class="text-xl font-bold tracking-wide bg-gradient-to-r from-purple-300 via-pink-300 to-purple-400 bg-clip-text text-transparent">
+                Dhiya Temples
+            </h1>
+        </div>
+        <button class="interactive-element w-10 h-10 rounded-full bg-[#1a0f2e] border border-purple-900/50 flex items-center justify-center text-amber-300 shadow-inner">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="p-4 flex-1 space-y-4 max-w-md mx-auto w-full pb-32">
+        
+        <!-- Portal Banner Card (Description Removed) -->
+        <div class="p-5 rounded-2xl bg-[#160b24] border border-purple-900/50 shadow-xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-purple-600/10 rounded-full blur-2xl pointer-events-none"></div>
+            <h2 class="text-xl font-bold tracking-tight text-white">Temple Management Portal</h2>
+        </div>
+
+        <!-- Grid Cards with Icons Inside Cards -->
+        <div class="grid grid-cols-2 gap-3">
+            <!-- Dashboard Card -->
+            <div class="interactive-element p-4 rounded-2xl bg-[#160b24] border border-purple-900/50 flex flex-col justify-between h-32 cursor-pointer shadow-lg hover:border-purple-700/60">
+                <div class="w-10 h-10 rounded-xl bg-purple-950/80 border border-purple-800/40 flex items-center justify-center text-purple-300">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white text-base">Dashboard</h3>
+                    <p class="text-xs text-purple-300/70">Budget metrics & feeds</p>
+                </div>
+            </div>
+
+            <!-- Projects Card -->
+            <div class="interactive-element p-4 rounded-2xl bg-[#160b24] border border-purple-900/50 flex flex-col justify-between h-32 cursor-pointer shadow-lg hover:border-purple-700/60">
+                <div class="w-10 h-10 rounded-xl bg-purple-950/80 border border-purple-800/40 flex items-center justify-center text-purple-300">
+                    <i class="fa-solid fa-folder-closed"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white text-base">Projects</h3>
+                    <p class="text-xs text-purple-300/70">Temples & phases</p>
+                </div>
+            </div>
+
+            <!-- Expenses Card -->
+            <div class="interactive-element p-4 rounded-2xl bg-[#160b24] border border-purple-900/50 flex flex-col justify-between h-32 cursor-pointer shadow-lg hover:border-purple-700/60">
+                <div class="w-10 h-10 rounded-xl bg-purple-950/80 border border-purple-800/40 flex items-center justify-center text-purple-300">
+                    <i class="fa-solid fa-dollar-sign"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white text-base">Expenses</h3>
+                    <p class="text-xs text-purple-300/70">Costs & receipts</p>
+                </div>
+            </div>
+
+            <!-- Reports Card -->
+            <div class="interactive-element p-4 rounded-2xl bg-[#160b24] border border-purple-900/50 flex flex-col justify-between h-32 cursor-pointer shadow-lg hover:border-purple-700/60">
+                <div class="w-10 h-10 rounded-xl bg-purple-950/80 border border-purple-800/40 flex items-center justify-center text-purple-300">
+                    <i class="fa-solid fa-file-lines"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white text-base">Reports</h3>
+                    <p class="text-xs text-purple-300/70">PDF & Excel exports</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full-Width Settings Card -->
+        <div class="interactive-element p-4 rounded-2xl bg-[#160b24] border border-purple-900/50 flex items-center space-x-4 cursor-pointer shadow-lg hover:border-purple-700/60">
+            <div class="w-10 h-10 rounded-xl bg-purple-950/80 border border-purple-800/40 flex items-center justify-center text-purple-300 shrink-0">
+                <i class="fa-solid fa-gear"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-white text-base">Settings & System Updates</h3>
+                <p class="text-xs text-purple-300/70">Backups, updates, and app customization</p>
+            </div>
+        </div>
+
+        <!-- Dropdown Controls Form Section -->
+        <div class="p-4 rounded-2xl bg-[#160b24] border border-purple-900/50 space-y-4 shadow-xl">
+            <h3 class="font-semibold text-sm text-purple-200 border-b border-purple-900/40 pb-2">Item Configuration Form</h3>
+            
+            <!-- Category Dropdown -->
+            <div class="space-y-1.5">
+                <label class="block text-xs text-purple-300">Category of Items</label>
+                <select class="interactive-element w-full bg-[#0f071c] border border-purple-900/60 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
+                    <option value="Materials">Materials</option>
+                    <option value="Hardware">Hardware</option>
+                    <option value="Tools">Tools</option>
+                    <option value="Labour">Labour</option>
+                    <option value="Miscellaneous">Miscellaneous</option>
+                </select>
+            </div>
+
+            <!-- Unit Selection Dropdown -->
+            <div class="space-y-1.5">
+                <label class="block text-xs text-purple-300">Unit Selection</label>
+                <select class="interactive-element w-full bg-[#0f071c] border border-purple-900/60 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
+                    <option value="Pcs">Pcs</option>
+                    <option value="Meter">Meter</option>
+                    <option value="Hour">Hour</option>
+                    <option value="Kg">Kg</option>
+                    <option value="Liter">Liter</option>
+                </select>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#0f071c] border-t border-purple-900/60 px-2 py-3 flex justify-around items-center z-50 shadow-2xl">
+        <button class="interactive-element flex flex-col items-center text-pink-500 space-y-1 p-1">
+            <i class="fa-solid fa-house text-lg"></i>
+            <span class="text-[10px] font-medium">Home</span>
+        </button>
+        <button class="interactive-element flex flex-col items-center text-purple-400/60 hover:text-purple-300 space-y-1 p-1">
+            <i class="fa-solid fa-chart-column text-lg"></i>
+            <span class="text-[10px] font-medium">Dashboard</span>
+        </button>
+        <button class="interactive-element flex flex-col items-center text-purple-400/60 hover:text-purple-300 space-y-1 p-1">
+            <i class="fa-solid fa-folder text-lg"></i>
+            <span class="text-[10px] font-medium">Projects</span>
+        </button>
+        <button class="interactive-element flex flex-col items-center text-purple-400/60 hover:text-purple-300 space-y-1 p-1">
+            <i class="fa-solid fa-dollar-sign text-lg"></i>
+            <span class="text-[10px] font-medium">Expenses</span>
+        </button>
+        <button class="interactive-element flex flex-col items-center text-purple-400/60 hover:text-purple-300 space-y-1 p-1">
+            <i class="fa-solid fa-file-lines text-lg"></i>
+            <span class="text-[10px] font-medium">Reports</span>
+        </button>
+        <button class="interactive-element flex flex-col items-center text-purple-400/60 hover:text-purple-300 space-y-1 p-1">
+            <i class="fa-solid fa-gear text-lg"></i>
+            <span class="text-[10px] font-medium">Settings</span>
+        </button>
+    </nav>
+
+</body>
+</html>
