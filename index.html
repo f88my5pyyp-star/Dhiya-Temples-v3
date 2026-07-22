@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Dhiya Temples - Project & Expense Tracker</title>
+  
+  <!-- PWA & Theme Integration -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b0f19">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="logo.png">
+
+  <!-- External Libraries for PDF & Excel Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    :root[data-theme="dark"] {
+      --bg-color: #0b0f19;
+      --card-bg: rgba(22, 30, 49, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f3f4f6;
+      --subtext: #9ca3af;
+      --input-bg: #111827;
+      --input-border: #374151;
+      --header-glow: radial-gradient(circle at 50% -20%, rgba(217, 70, 239, 0.15), transparent 70%);
+      --theme-dash: #d946ef;
+      --theme-proj: #06b6d4;
+      --theme-exp: #10b981;
+      --theme-rep: #f59e0b;
+      --theme-set: #8b5cf6;
+    }
+
+    :root[data-theme="light"] {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: rgba(0, 0, 0, 0.08);
+      --text: #1f2937;
+      --subtext: #6b7280;
+      --input-bg: #f1f5f9;
+      --input-border: #cbd5e1;
+      --header-glow: radial-gradient(circle at 50% -20%, rgba(217, 70, 239, 0.08), transparent 70%);
+      --theme-dash: #c026d3;
+      --theme-proj: #0891b2;
+      --theme-exp: #059669;
+      --theme-rep: #d97706;
+      --theme-set: #7c3aed;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg-color); color: var(--text); padding-bottom: 90px; transition: background 0.3s ease, color 0.3s ease; background-image: var(--header-glow); background-repeat: no-repeat; min-height: 100vh; }
+
+    header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: rgba(11, 15, 25, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--card-border); }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand img { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; box-shadow: 0 0 12px rgba(217, 70, 239, 0.3); }
+    .brand-title { font-weight: 800; font-size: 1.1rem; letter-spacing: -0.3px; background: linear-gradient(135deg, #f472b6, #d946ef); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 68px; background: rgba(11, 15, 25, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+    .nav-btn { background: none; border: none; color: var(--subtext); display: flex; flex-direction: column; align-items: center; font-size: 0.72rem; gap: 4px; width: 20%; cursor: pointer; transition: color 0.2s, transform 0.1s; }
+    .nav-btn .icon { font-size: 1.3rem; }
+    .nav-btn.active { color: var(--text); font-weight: 700; }
+
+    body[data-tab="dashboard"] .nav-btn[onclick*="dashboard"] { color: var(--theme-dash); }
+    body[data-tab="projects"] .nav-btn[onclick*="projects"] { color: var(--theme-proj); }
+    body[data-tab="expenses"] .nav-btn[onclick*="expenses"] { color: var(--theme-exp); }
+    body[data-tab="reports"] .nav-btn[onclick*="reports"] { color: var(--theme-rep); }
+    body[data-tab="settings"] .nav-btn[onclick*="settings"] { color: var(--theme-set); }
+
+    .container { padding: 16px; max-width: 650px; margin: 0 auto; }
+    .page { display: none; }
+    .page.active { display: block; animation: pageSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes pageSlideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 18px; margin-bottom: 16px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+    h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 16px; }
+    h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .metric-box { padding: 14px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); }
+    .metric-title { font-size: 0.75rem; color: var(--subtext); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+    .metric-value { font-size: 1.25rem; font-weight: 800; margin-top: 4px; }
+
+    .progress-bar-bg { background: rgba(255,255,255,0.1); height: 10px; border-radius: 99px; overflow: hidden; margin-top: 10px; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #d946ef, #8b5cf6); border-radius: 99px; transition: width 0.4s ease, background 0.3s ease; }
+
+    /* BUDGET THRESHOLD ALERT STYLES */
+    .badge-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important; color: #ffffff !important; box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+    .badge-danger  { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important; color: #ffffff !important; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+    .progress-warning { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%) !important; box-shadow: 0 0 12px rgba(245, 158, 11, 0.6) !important; }
+    .progress-danger  { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%) !important; box-shadow: 0 0 12px rgba(239, 68, 68, 0.6) !important; }
+
+    .alert-banner { padding: 10px 14px; border-radius: 12px; font-size: 0.85rem; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; animation: pageSlideIn 0.3s ease-out; }
+    .alert-banner-warning { background: rgba(245, 158, 11, 0.15); border: 1.5px solid #f59e0b; color: #fbbf24; }
+    .alert-banner-danger  { background: rgba(239, 68, 68, 0.15);  border: 1.5px solid #ef4444; color: #f87171; }
+
+    .form-group { margin-bottom: 14px; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--subtext); margin-bottom: 6px; }
+    input, select, textarea { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text); font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
+    input:focus, select:focus { border-color: var(--theme-dash); }
+
+    .btn { width: 100%; padding: 13px; border-radius: 12px; border: none; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: transform 0.1s, opacity 0.2s; }
+    .btn:active { transform: scale(0.98); }
+    .btn-dash { background: linear-gradient(135deg, #d946ef, #c026d3); color: white; }
+    .btn-proj { background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; }
+    .btn-exp  { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .btn-rep  { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+    .btn-danger { background: #ef4444; color: white; }
+    .btn-small { padding: 6px 12px; font-size: 0.75rem; border-radius: 8px; width: auto; }
+
+    .item-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--card-border); }
+    .item-row:last-child { border-bottom: none; }
+    .badge { padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+    .badge-active { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+    .badge-planning { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+    .badge-completed { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+    .cat-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: rgba(255, 255, 255, 0.08); color: var(--subtext); }
+
+    .btn-group { display: flex; gap: 6px; }
+    .item-link { font-size: 0.75rem; color: var(--theme-proj); text-decoration: none; display: inline-block; margin-top: 4px; font-weight: 600; cursor: pointer; }
+
+    /* Modal for Image Preview */
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(10px); justify-content: center; align-items: center; padding: 20px; }
+    .modal-content { max-width: 100%; max-height: 80vh; border-radius: 12px; object-fit: contain; }
+  </style>
+</head>
+<body data-tab="dashboard">
+
+  <header>
+    <div class="brand">
+      <img src="logo.png" alt="Dhiya Temples Logo">
+      <div class="brand-title">Dhiya Temples</div>
+    </div>
+    <button onclick="toggleDarkMode()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">🌓</button>
+  </header>
+
+  <div class="container">
+    <!-- DASHBOARD PAGE -->
+    <div id="page-dashboard" class="page active">
+      <h1>📊 Dashboard</h1>
+      
+      <!-- Budget Threshold Alert Banner Container -->
+      <div id="dash-alert-container"></div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="metric-title">Overall Budget Used</div>
+          <div id="dash-progress-text" style="font-weight:800; font-size:0.9rem; color:var(--theme-dash);">0%</div>
+        </div>
+        <div class="progress-bar-bg">
+          <div id="dash-progress-bar" class="progress-bar-fill" style="width:0%;"></div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:16px;">
+        <div class="metric-box">
+          <div class="metric-title">Total Budget</div>
+          <div class="metric-value" id="dash-budget">$0.00</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-title">Total Spent</div>
+          <div class="metric-value" id="dash-spent" style="color:var(--theme-dash);">$0.00</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="metric-title">Remaining Funds</div>
+        <div class="metric-value" id="dash-remaining" style="color:#10b981; font-size:1.6rem; margin-top:4px;">$0.00</div>
+      </div>
+
+      <div class="card">
+        <h2>Recent Expenses</h2>
+        <div id="dash-recent-list"></div>
+      </div>
+    </div>
+
+    <!-- PROJECTS PAGE -->
+    <div id="page-projects" class="page">
+      <h1>📁 Projects</h1>
+      <div class="card">
+        <h2 id="proj-form-title">Add Project</h2>
+        <form id="project-form">
+          <input type="hidden" id="proj-id">
+          <div class="form-group">
+            <label>Project Title</label>
+            <input type="text" id="proj-title" placeholder="e.g. Main Shrine Renovation" required>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Status</label>
+              <select id="proj-status">
+                <option value="Planning">Planning</option>
+                <option value="Active">Active</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Budget ($ AUD)</label>
+              <input type="number" id="proj-budget" step="0.01" placeholder="5000" required>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Start Date</label>
+              <input type="date" id="proj-start" required>
+            </div>
+            <div class="form-group">
+              <label>Target Date</label>
+              <input type="date" id="proj-target" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-proj" style="margin-top:6px;">Save Project</button>
+          <button type="button" id="proj-cancel-btn" class="btn btn-small" style="display:none; margin:10px auto 0 auto; background:transparent; color:var(--subtext);" onclick="resetProjectForm()">Cancel Editing</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h2>Project Directory</h2>
+          <select id="proj-status-filter" style="width:auto; padding:6px 10px; font-size:0.8rem;" onchange="render()">
+            <option value="All">All Statuses</option>
+            <option value="Planning">Planning</option>
+            <option value="Active">Active</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+        <div id="projects-list"></div>
+      </div>
+    </div>
+    <!-- EXPENSES PAGE -->
+    <div id="page-expenses" class="page">
+      <h1>💸 Expenses</h1>
+      <div class="card">
+        <h2 id="exp-form-title">Add Expense Item</h2>
+        <form id="expense-form">
+          <input type="hidden" id="exp-id">
+          <div class="form-group">
+            <label>Assigned Project</label>
+            <select id="exp-project-id" required></select>
+          </div>
+          <div class="form-group">
+            <label>Item Description</label>
+            <input type="text" id="exp-desc" placeholder="e.g. Brass Lamp Sets" required>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Category</label>
+              <select id="exp-category">
+                <option value="Materials">Materials</option>
+                <option value="Labor">Labor</option>
+                <option value="Equipment">Equipment</option>
+                <option value="Permits">Permits</option>
+                <option value="Miscellaneous">Miscellaneous</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Quantity</label>
+              <input type="number" id="exp-qty" value="1" min="1" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Unit Cost ($ AUD)</label>
+            <input type="number" id="exp-unit-cost" step="0.01" placeholder="150.00" required>
+          </div>
+          <div class="form-group">
+            <label>Purchase Link (Optional)</label>
+            <input type="url" id="exp-url" placeholder="https://supplier.com/item">
+          </div>
+          <div class="form-group">
+            <label>Attach Receipt Image (Optional)</label>
+            <input type="file" id="exp-receipt-input" accept="image/*" capture="environment">
+            <input type="hidden" id="exp-receipt-data">
+            <div id="receipt-preview-status" style="font-size:0.75rem; color:#10b981; margin-top:4px; font-weight:600;"></div>
+          </div>
+          <button type="submit" class="btn btn-exp" style="margin-top:6px;">Add Expense Item</button>
+          <button type="button" id="exp-cancel-btn" class="btn btn-small" style="display:none; margin:10px auto 0 auto; background:transparent; color:var(--subtext);" onclick="resetExpenseForm()">Cancel Editing</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Expense Log</h2>
+        <div class="grid-2" style="margin-bottom:12px;">
+          <select id="expense-cat-filter" onchange="render()">
+            <option value="All">All Categories</option>
+            <option value="Materials">Materials</option>
+            <option value="Labor">Labor</option>
+            <option value="Equipment">Equipment</option>
+            <option value="Permits">Permits</option>
+            <option value="Miscellaneous">Miscellaneous</option>
+          </select>
+          <input type="text" id="expense-search" placeholder="🔍 Search..." oninput="render()">
+        </div>
+        <div id="category-summary" style="font-size:0.8rem; color:var(--subtext); margin-bottom:10px; font-weight:600;"></div>
+        <div id="expenses-list"></div>
+      </div>
+    </div>
+
+    <!-- REPORTS PAGE -->
+    <div id="page-reports" class="page">
+      <h1>📄 Export Reports</h1>
+      <div class="card">
+        <h2>Generate Summary</h2>
+        <div class="form-group">
+          <label>Select Project</label>
+          <select id="pdf-project-select"></select>
+        </div>
+        <div class="form-group">
+          <label>File Format</label>
+          <select id="report-format-select">
+            <option value="PDF">PDF Document (.pdf)</option>
+            <option value="EXCEL">Excel Spreadsheet (.xlsx)</option>
+          </select>
+        </div>
+        <button class="btn btn-rep" onclick="downloadReport()">📥 Share / Export Report</button>
+      </div>
+    </div>
+
+    <!-- SETTINGS PAGE -->
+    <div id="page-settings" class="page">
+      <h1>⚙️ Settings</h1>
+      <div class="card">
+        <h2>App Version & Status</h2>
+        <p style="font-size:0.85rem; color:var(--subtext);">Version: <strong id="app-version-tag">v2.2.0</strong></p>
+        <p id="update-msg" style="font-size:0.8rem; margin-top:6px; color:var(--subtext);"></p>
+        <button id="update-btn" class="btn btn-small" style="margin-top:10px; background:var(--input-bg); border:1px solid var(--input-border); color:var(--text);" onclick="checkForAppUpdate()">Check for App Updates</button>
+      </div>
+
+      <div class="card">
+        <h2>Data Management</h2>
+        <button class="btn btn-small" style="background:var(--input-bg); border:1px solid var(--input-border); color:var(--text); width:100%; margin-bottom:8px;" onclick="manualSave()">💾 Force Manual Save</button>
+        <button class="btn btn-small" style="background:var(--input-bg); border:1px solid var(--input-border); color:var(--text); width:100%; margin-bottom:8px;" onclick="exportData()">📤 Export Backup JSON</button>
+        <label class="btn btn-small" style="background:var(--input-bg); border:1px solid var(--input-border); color:var(--text); width:100%; text-align:center; cursor:pointer;">
+          📥 Import Backup JSON
+          <input type="file" id="import-file" accept=".json" style="display:none;" onchange="importData(event)">
+        </label>
+        <p id="last-saved-time" style="font-size:0.75rem; color:var(--subtext); margin-top:8px; text-align:center;"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden Printable PDF Container -->
+  <div id="pdf-wrapper" style="display:none; position:absolute; left:-9999px; top:-9999px;">
+    <div id="pdf-page-element" style="width:210mm; padding:15mm; background:#fff; color:#000; font-family:Arial, sans-serif;">
+      <h1 id="pdf-title" style="color:#0b2b18; border-bottom:2px solid #dda835; padding-bottom:5px; margin-bottom:5px;"></h1>
+      <p id="pdf-meta" style="font-size:12px; color:#555; margin-bottom:15px;"></p>
+      
+      <div style="display:flex; justify-content:space-between; background:#f4f4f4; padding:10px; border-radius:5px; margin-bottom:15px;">
+        <div><strong>Total Budget:</strong> <span id="pdf-budget"></span></div>
+        <div><strong>Total Expenses:</strong> <span id="pdf-spent"></span></div>
+      </div>
+
+      <h3 id="pdf-table-heading" style="margin-bottom:8px;">Itemized Expense Report</h3>
+      <table style="width:100%; border-collapse:collapse; font-size:11px;">
+        <thead>
+          <tr style="background:#0b2b18; color:#dda835; text-align:left;">
+            <th style="padding:6px; border:1px solid #ddd;">Description</th>
+            <th style="padding:6px; border:1px solid #ddd;">Category</th>
+            <th style="padding:6px; border:1px solid #ddd;">Qty</th>
+            <th style="padding:6px; border:1px solid #ddd;">Unit Cost</th>
+            <th style="padding:6px; border:1px solid #ddd;">Total Cost</th>
+          </tr>
+        </thead>
+        <tbody id="pdf-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Receipt Image Modal -->
+  <div id="receipt-modal" class="modal" onclick="closeReceiptModal()">
+    <img id="modal-receipt-img" class="modal-content" src="" alt="Receipt Preview">
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="nav-bar">
+    <button class="nav-btn active" onclick="switchTab('dashboard', this)"><span class="icon">📊</span>Dashboard</button>
+    <button class="nav-btn" onclick="switchTab('projects', this)"><span class="icon">📁</span>Projects</button>
+    <button class="nav-btn" onclick="switchTab('expenses', this)"><span class="icon">💸</span>Expenses</button>
+    <button class="nav-btn" onclick="switchTab('reports', this)"><span class="icon">📄</span>Reports</button>
+    <button class="nav-btn" onclick="switchTab('settings', this)"><span class="icon">⚙️</span>Settings</button>
+  </nav>
+
+  <script>
+    const APP_VERSION = "v2.2.0";
+    let db;
+    let data = { projects: [], expenses: [], settings: { darkMode: true } };
+    let newWorker = null;
+
+    // MULTI-PATTERN HAPTIC ENGINE
+    function triggerHaptic(type = 'medium') {
+      if (!('vibrate' in navigator)) return;
+      switch (type) {
+        case 'light': navigator.vibrate(10); break;
+        case 'selection': navigator.vibrate([12, 20, 12]); break;
+        case 'medium': navigator.vibrate(25); break;
+        case 'heavy': navigator.vibrate([40, 30, 40]); break;
+        case 'delete': navigator.vibrate([40, 50, 40, 50, 60]); break;
+      }
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        reg.addEventListener('updatefound', () => {
+          newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              const updateBtn = document.getElementById('update-btn');
+              updateBtn.textContent = '🚀 Update Available! Tap to Apply';
+              updateBtn.classList.add('btn-dash');
+              document.getElementById('update-msg').textContent = 'A new version of Dhiya Temples is ready.';
+              triggerHaptic('heavy');
+            }
+          });
+        });
+      }).catch(() => {
+        document.getElementById('update-msg').textContent = "⚠️ Service Worker Failed: Verify sw.js is in root directory.";
+      });
+
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          window.location.reload();
+          refreshing = true;
+        }
+      });
+    }
+
+    function checkForAppUpdate() {
+      const msg = document.getElementById('update-msg');
+      if (window.location.protocol === 'file:') {
+        msg.textContent = "⚠️ Updates disabled: File opened locally.";
+        return;
+      }
+      if (newWorker) {
+        newWorker.postMessage({ action: 'skipWaiting' });
+      } else if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration().then(reg => {
+          if (reg) {
+            msg.textContent = "Checking repository for latest version...";
+            reg.update().catch(() => { msg.textContent = "Unable to fetch updates."; });
+            setTimeout(() => {
+              if (!newWorker && msg.textContent.includes("Checking")) {
+                msg.textContent = "✓ You are using the latest version!";
+              }
+            }, 2000);
+          } else {
+            msg.textContent = "Service Worker not registered yet.";
+          }
+        });
+      }
+    }
+
+    // CANVAS RECEIPT COMPRESSION ENGINE
+    document.getElementById('exp-receipt-input').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const originalSizeKb = (file.size / 1024).toFixed(1);
+      const reader = new FileReader();
+
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          const MAX_WIDTH = 1000;
+          const MAX_HEIGHT = 1000;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width = Math.round((width * MAX_HEIGHT) / height);
+              height = MAX_HEIGHT;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          const compressedSizeKb = (compressedBase64.length * (3 / 4) / 1024).toFixed(1);
+
+          document.getElementById('exp-receipt-data').value = compressedBase64;
+          document.getElementById('receipt-preview-status').textContent = 
+            `✓ Compressed (${originalSizeKb} KB → ${compressedSizeKb} KB)`;
+          
+          triggerHaptic('heavy');
+        };
+
+        img.src = evt.target.result;
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    function initStorage() {
+      const saved = localStorage.getItem('dhiya_temples_tracker_data');
+      if (saved) {
+        try { data = JSON.parse(saved); } catch(e) {}
+      }
+      const request = indexedDB.open('DhiyaTemplesDB', 1);
+      request.onupgradeneeded = (e) => {
+        db = e.target.result;
+        if (!db.objectStoreNames.contains('store')) db.createObjectStore('store');
+      };
+      request.onsuccess = (e) => {
+        db = e.target.result;
+        loadDB();
+      };
+      render();
+    }
+
+    function loadDB() {
+      if (!db) return;
+      const tx = db.transaction('store', 'readonly');
+      const req = tx.objectStore('store').get('app_data');
+      req.onsuccess = () => {
+        if (req.result) { data = req.result; render(); }
+      };
+    }
+
+    function autoSave() {
+      localStorage.setItem('dhiya_temples_tracker_data', JSON.stringify(data));
+      if (db) {
+        const tx = db.transaction('store', 'readwrite');
+        tx.objectStore('store').put(data, 'app_data');
+      }
+      document.getElementById('last-saved-time').textContent = `Saved at ${new Date().toLocaleTimeString()}`;
+      render();
+    }
+
+    function manualSave() { autoSave(); alert('Data saved successfully!'); }
+    function formatAUD(amount) { return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' }).format(amount || 0); }
+
+    function switchTab(tabId, el) {
+      triggerHaptic('selection');
+      document.body.setAttribute('data-tab', tabId);
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`page-${tabId}`).classList.add('active');
+      if (el) el.classList.add('active');
+      render();
+    }
+
+    function toggleDarkMode() {
+      data.settings.darkMode = !data.settings.darkMode;
+      applyTheme();
+      autoSave();
+    }
+
+    function applyTheme() {
+      document.documentElement.setAttribute('data-theme', data.settings.darkMode ? 'dark' : 'light');
+    }
+
+    document.getElementById('project-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('proj-id').value;
+      const title = document.getElementById('proj-title').value;
+      const status = document.getElementById('proj-status').value;
+      const start = document.getElementById('proj-start').value;
+      const target = document.getElementById('proj-target').value;
+      const budget = parseFloat(document.getElementById('proj-budget').value);
+
+      if (id) {
+        const proj = data.projects.find(p => p.id == id);
+        if (proj) Object.assign(proj, { title, status, start, target, budget });
+      } else {
+        data.projects.push({ id: Date.now(), title, status, start, target, budget });
+      }
+      resetProjectForm();
+      autoSave();
+    });
+
+    function editProject(id) {
+      triggerHaptic('medium');
+      const proj = data.projects.find(p => p.id == id);
+      if (!proj) return;
+      document.getElementById('proj-id').value = proj.id;
+      document.getElementById('proj-title').value = proj.title;
+      document.getElementById('proj-status').value = proj.status;
+      document.getElementById('proj-start').value = proj.start;
+      document.getElementById('proj-target').value = proj.target;
+      document.getElementById('proj-budget').value = proj.budget;
+      document.getElementById('proj-form-title').textContent = "Edit Project";
+      document.getElementById('proj-cancel-btn').style.display = "block";
+    }
+
+    function resetProjectForm() {
+      document.getElementById('project-form').reset();
+      document.getElementById('proj-id').value = '';
+      document.getElementById('proj-form-title').textContent = "Add Project";
+      document.getElementById('proj-cancel-btn').style.display = "none";
+    }
+
+    function deleteProject(id) {
+      triggerHaptic('delete');
+      if (confirm('Delete project and all associated expenses?')) {
+        data.projects = data.projects.filter(p => p.id != id);
+        data.expenses = data.expenses.filter(e => e.projectId != id);
+        autoSave();
+      }
+    }
+
+    document.getElementById('expense-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('exp-id').value;
+      const projectId = document.getElementById('exp-project-id').value;
+      const desc = document.getElementById('exp-desc').value;
+      const qty = parseInt(document.getElementById('exp-qty').value) || 1;
+      const unitCost = parseFloat(document.getElementById('exp-unit-cost').value) || 0;
+      const url = document.getElementById('exp-url').value;
+      const category = document.getElementById('exp-category').value;
+      const receipt = document.getElementById('exp-receipt-data').value;
+      const totalCost = qty * unitCost;
+
+      if (id) {
+        const exp = data.expenses.find(x => x.id == id);
+        if (exp) Object.assign(exp, { projectId, desc, qty, unitCost, cost: totalCost, url, category, receipt: receipt || exp.receipt });
+      } else {
+        data.expenses.unshift({ 
+          id: Date.now(), projectId, desc, qty, unitCost, cost: totalCost, url, category, receipt, date: new Date().toISOString().split('T')[0] 
+        });
+      }
+      resetExpenseForm();
+      autoSave();
+    });
+
+    function editExpense(id) {
+      triggerHaptic('medium');
+      const exp = data.expenses.find(x => x.id == id);
+      if (!exp) return;
+      document.getElementById('exp-id').value = exp.id;
+      document.getElementById('exp-project-id').value = exp.projectId;
+      document.getElementById('exp-desc').value = exp.desc;
+      document.getElementById('exp-qty').value = exp.qty || 1;
+      document.getElementById('exp-unit-cost').value = exp.unitCost || exp.cost;
+      document.getElementById('exp-url').value = exp.url || '';
+      document.getElementById('exp-category').value = exp.category;
+      document.getElementById('exp-receipt-data').value = exp.receipt || '';
+      document.getElementById('receipt-preview-status').textContent = exp.receipt ? '✓ Receipt Attached' : '';
+      document.getElementById('exp-form-title').textContent = "Edit Expense Item";
+      document.getElementById('exp-cancel-btn').style.display = "block";
+    }
+
+    function resetExpenseForm() {
+      document.getElementById('expense-form').reset();
+      document.getElementById('exp-id').value = '';
+      document.getElementById('exp-qty').value = '1';
+      document.getElementById('exp-receipt-data').value = '';
+      document.getElementById('receipt-preview-status').textContent = '';
+      document.getElementById('exp-form-title').textContent = "Add Expense Item";
+      document.getElementById('exp-cancel-btn').style.display = "none";
+    }
+
+    function deleteExpense(id) {
+      triggerHaptic('delete');
+      data.expenses = data.expenses.filter(x => x.id != id);
+      autoSave();
+    }
+    function openReceiptModal(expId) {
+      triggerHaptic('medium');
+      const exp = data.expenses.find(e => e.id == expId);
+      if (exp && exp.receipt) {
+        document.getElementById('modal-receipt-img').src = exp.receipt;
+        document.getElementById('receipt-modal').style.display = 'flex';
+      }
+    }
+
+    function closeReceiptModal() {
+      triggerHaptic('light');
+      document.getElementById('receipt-modal').style.display = 'none';
+    }
+
+    // NATIVE WEB SHARE API HELPER
+    async function shareOrDownloadFile(file) {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: file.name,
+            text: `Dhiya Temples Report: ${file.name}`
+          });
+          return;
+        } catch (err) {
+          if (err.name !== 'AbortError') console.warn('Native share failed:', err);
+          else return;
+        }
+      }
+
+      const url = URL.createObjectURL(file);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadReport() {
+      const format = document.getElementById('report-format-select').value;
+      if (format === 'EXCEL') { generateExcel(); } else { generatePDF(); }
+    }
+
+    function generateExcel() {
+      const projId = document.getElementById('pdf-project-select').value;
+      const selectedCategory = document.getElementById('expense-cat-filter').value;
+      const proj = data.projects.find(p => p.id == projId);
+
+      if (!proj) { alert("Please select a project first."); return; }
+
+      let projExpenses = data.expenses.filter(e => e.projectId == proj.id);
+      if (selectedCategory !== 'All') { projExpenses = projExpenses.filter(e => e.category === selectedCategory); }
+
+      const reportData = [
+        ["Dhiya Temples - Project Expense Report"],
+        ["Project Title:", proj.title],
+        ["Status:", proj.status],
+        ["Schedule:", `${proj.start} to ${proj.target}`],
+        ["Total Budget:", proj.budget],
+        ["Category Filter:", selectedCategory],
+        [],
+        ["Item Description", "Category", "Quantity", "Unit Cost ($ AUD)", "Total Cost ($ AUD)", "Purchase Link"]
+      ];
+
+      projExpenses.forEach(e => {
+        reportData.push([e.desc, e.category, e.qty || 1, e.unitCost || e.cost, e.cost, e.url || "N/A"]);
+      });
+
+      const totalSpent = projExpenses.reduce((acc, e) => acc + (e.cost || 0), 0);
+      reportData.push([]);
+      reportData.push(["", "", "", "Total Selected Expenses:", totalSpent]);
+
+      const ws = XLSX.utils.aoa_to_sheet(reportData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Expenses");
+
+      const fileName = `${proj.title.replace(/\s+/g, '_')}_Report.xlsx`;
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const file = new File([blob], fileName, { type: blob.type });
+
+      shareOrDownloadFile(file);
+    }
+
+    async function generatePDF() {
+      const projId = document.getElementById('pdf-project-select').value;
+      const selectedCategory = document.getElementById('expense-cat-filter').value;
+      const proj = data.projects.find(p => p.id == projId);
+      
+      if (!proj) { alert("Please select a project first."); return; }
+
+      let projExpenses = data.expenses.filter(e => e.projectId == proj.id);
+      if (selectedCategory !== 'All') { projExpenses = projExpenses.filter(e => e.category === selectedCategory); }
+
+      const totalFilteredCost = projExpenses.reduce((acc, e) => acc + (e.cost || 0), 0);
+
+      document.getElementById('pdf-title').textContent = proj.title;
+      document.getElementById('pdf-meta').textContent = `Status: ${proj.status} | Schedule: ${proj.start} to ${proj.target}`;
+      document.getElementById('pdf-budget').textContent = formatAUD(proj.budget);
+      document.getElementById('pdf-spent').textContent = formatAUD(totalFilteredCost);
+      document.getElementById('pdf-table-heading').textContent = selectedCategory === 'All' ? 'Itemized Expense Report' : `Expense Report (${selectedCategory})`;
+
+      const tbody = document.getElementById('pdf-table-body');
+      tbody.innerHTML = '';
+
+      if (projExpenses.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No expenses recorded for this category.</td></tr>`;
+      } else {
+        projExpenses.forEach(e => {
+          tbody.innerHTML += `
+            <tr>
+              <td><strong>${e.desc}</strong></td>
+              <td>${e.category}</td>
+              <td>${e.qty || 1}</td>
+              <td>${formatAUD(e.unitCost)}</td>
+              <td>${formatAUD(e.cost)}</td>
+            </tr>
+          `;
+        });
+      }
+
+      const wrapper = document.getElementById('pdf-wrapper');
+      const printElement = document.getElementById('pdf-page-element');
+      
+      wrapper.style.display = 'block';
+
+      const fileName = `${proj.title.replace(/\s+/g, '_')}_Report.pdf`;
+      const opt = {
+        margin: 5,
+        filename: fileName,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      try {
+        const pdfBlob = await html2pdf().set(opt).from(printElement).outputPdf('blob');
+        const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+        await shareOrDownloadFile(file);
+      } catch (err) {
+        alert("Error generating PDF report.");
+      } finally {
+        wrapper.style.display = 'none';
+      }
+    }
+
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `dhiya_temples_backup_${new Date().toISOString().split('T')[0]}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importData(event) {
+      triggerHaptic('heavy');
+      const fileReader = new FileReader();
+      fileReader.onload = function(e) {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          if (importedData && Array.isArray(importedData.projects)) {
+            data = importedData;
+            autoSave();
+            alert("Backup restored successfully!");
+          }
+        } catch (err) { alert("Error reading file: " + err.message); }
+      };
+      if (event.target.files[0]) fileReader.readAsText(event.target.files[0]);
+    }
+
+    function render() {
+      applyTheme();
+      document.getElementById('app-version-tag').textContent = APP_VERSION;
+
+      const totalBudget = data.projects.reduce((acc, p) => acc + (p.budget || 0), 0);
+      const totalSpent = data.expenses.reduce((acc, e) => acc + (e.cost || 0), 0);
+      const remaining = totalBudget - totalSpent;
+      const progress = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
+
+      document.getElementById('dash-budget').textContent = formatAUD(totalBudget);
+      document.getElementById('dash-spent').textContent = formatAUD(totalSpent);
+      
+      const remainingEl = document.getElementById('dash-remaining');
+      remainingEl.textContent = formatAUD(remaining);
+      remainingEl.style.color = remaining < 0 ? '#ef4444' : '#10b981';
+
+      // BUDGET THRESHOLD ALERT ENGINE
+      const progressBar = document.getElementById('dash-progress-bar');
+      const alertContainer = document.getElementById('dash-alert-container');
+      const progressText = document.getElementById('dash-progress-text');
+
+      progressBar.className = 'progress-bar-fill';
+      alertContainer.innerHTML = '';
+
+      if (progress >= 100) {
+        progressBar.classList.add('progress-danger');
+        progressText.style.color = '#ef4444';
+        alertContainer.innerHTML = `
+          <div class="alert-banner alert-banner-danger">
+            🚨 <span><strong>Budget Exceeded!</strong> Expenses have passed 100% of allocated budget.</span>
+          </div>`;
+      } else if (progress >= 80) {
+        progressBar.classList.add('progress-warning');
+        progressText.style.color = '#f59e0b';
+        alertContainer.innerHTML = `
+          <div class="alert-banner alert-banner-warning">
+            ⚠️ <span><strong>Budget Warning:</strong> You have used ${progress}% of your overall budget.</span>
+          </div>`;
+      } else {
+        progressText.style.color = 'var(--theme-dash)';
+      }
+
+      progressText.textContent = `${progress}%`;
+      progressBar.style.width = `${Math.min(100, progress)}%`;
+
+      // Recent Expenses
+      const recentEl = document.getElementById('dash-recent-list');
+      recentEl.innerHTML = data.expenses.length === 0 ? '<p style="color:var(--subtext);font-size:0.85rem">No expenses entered yet.</p>' : '';
+      data.expenses.slice(0, 5).forEach(e => {
+        const proj = data.projects.find(p => p.id == e.projectId);
+        recentEl.innerHTML += `
+          <div class="item-row">
+            <div>
+              <div><strong>${e.desc}</strong> (${e.qty || 1}x)</div>
+              <div style="font-size:0.75rem; color:var(--subtext); margin-top:2px;">${proj ? proj.title : 'Unassigned'} • <span class="cat-badge">${e.category}</span></div>
+            </div>
+            <div style="font-weight:900; color:var(--theme-dash);">${formatAUD(e.cost)}</div>
+          </div>
+        `;
+      });
+
+      // Projects List with Threshold Badges
+      const projStatusFilter = document.getElementById('proj-status-filter').value;
+      const filteredProjects = data.projects.filter(p => projStatusFilter === 'All' || p.status === projStatusFilter);
+
+      const projListEl = document.getElementById('projects-list');
+      projListEl.innerHTML = filteredProjects.length === 0 ? '<p style="color:var(--subtext);font-size:0.85rem">No projects match this status.</p>' : '';
+      
+      filteredProjects.forEach(p => {
+        const spent = data.expenses.filter(e => e.projectId == p.id).reduce((acc, e) => acc + e.cost, 0);
+        const statusClass = p.status.toLowerCase().replace(' ', '-');
+        const projPct = p.budget > 0 ? Math.round((spent / p.budget) * 100) : 0;
+
+        let thresholdBadge = '';
+        let spentTextColor = 'var(--text)';
+
+        if (projPct >= 100) {
+          thresholdBadge = `<span class="badge badge-danger">🚨 Over Budget (${projPct}%)</span>`;
+          spentTextColor = '#ef4444';
+        } else if (projPct >= 80) {
+          thresholdBadge = `<span class="badge badge-warning">⚠️ ${projPct}% Used</span>`;
+          spentTextColor = '#f59e0b';
+        }
+
+        projListEl.innerHTML += `
+          <div class="item-row">
+            <div>
+              <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                <strong>${p.title}</strong> 
+                <span class="badge badge-${statusClass}">${p.status}</span>
+                ${thresholdBadge}
+              </div>
+              <div style="font-size:0.75rem; color:var(--subtext); margin-top:2px;">${p.start} to ${p.target}</div>
+              <div style="font-size:0.85rem; margin-top:4px; font-weight:800;">
+                Spent: <span style="color:${spentTextColor};">${formatAUD(spent)}</span> / ${formatAUD(p.budget)}
+              </div>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-small" style="background: var(--theme-proj);" onclick="editProject(${p.id})">Edit</button>
+              <button class="btn btn-danger btn-small" onclick="deleteProject(${p.id})">✕</button>
+            </div>
+          </div>
+        `;
+      });
+
+      // Expense Dropdowns & Filtering
+      const expProjSelect = document.getElementById('exp-project-id');
+      const pdfProjSelect = document.getElementById('pdf-project-select');
+      
+      expProjSelect.innerHTML = data.projects.length === 0 ? '<option value="">Create a Project First</option>' : '';
+      pdfProjSelect.innerHTML = data.projects.length === 0 ? '<option value="">Select Project for Report</option>' : '';
+
+      data.projects.forEach(p => {
+        expProjSelect.innerHTML += `<option value="${p.id}">${p.title}</option>`;
+        pdfProjSelect.innerHTML += `<option value="${p.id}">${p.title}</option>`;
+      });
+
+      const selectedCategory = document.getElementById('expense-cat-filter').value;
+      const searchQuery = (document.getElementById('expense-search').value || '').toLowerCase();
+
+      let filteredExpenses = data.expenses.filter(e => {
+        const matchesCategory = (selectedCategory === 'All') || (e.category === selectedCategory);
+        const matchesSearch = e.desc.toLowerCase().includes(searchQuery) || e.category.toLowerCase().includes(searchQuery);
+        return matchesCategory && matchesSearch;
+      });
+
+      const catSum = filteredExpenses.reduce((acc, e) => acc + (e.cost || 0), 0);
+      document.getElementById('category-summary').textContent = `Showing ${filteredExpenses.length} items (${formatAUD(catSum)})`;
+
+      const expListEl = document.getElementById('expenses-list');
+      expListEl.innerHTML = filteredExpenses.length === 0 ? '<p style="color:var(--subtext);font-size:0.85rem">No matching items found.</p>' : '';
+      
+      filteredExpenses.forEach(e => {
+        const linkHtml = e.url ? `<a href="${e.url}" target="_blank" rel="noopener" class="item-link" onclick="triggerHaptic('light')">🔗 Purchase Link</a>` : '';
+        const receiptHtml = e.receipt ? `<span class="item-link" onclick="openReceiptModal(${e.id})" style="margin-left:8px;">📷 View Receipt</span>` : '';
+        const qtyText = (e.qty && e.qty > 1) ? `<span style="font-size:0.8rem; color:var(--subtext);">(${e.qty} × ${formatAUD(e.unitCost)})</span>` : '';
+        
+        expListEl.innerHTML += `
+          <div class="item-row">
+            <div>
+              <div><strong>${e.desc}</strong> ${qtyText}</div>
+              <div style="font-size:0.75rem; color:var(--subtext); margin-top:2px;"><span class="cat-badge">${e.category}</span></div>
+              <div>${linkHtml} ${receiptHtml}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-weight:900; font-size:1rem; color:var(--text);">${formatAUD(e.cost)}</div>
+              <div class="btn-group" style="margin-top:6px;">
+                <button class="btn btn-small" style="background: var(--theme-exp);" onclick="editExpense(${e.id})">Edit</button>
+                <button class="btn btn-danger btn-small" onclick="deleteExpense(${e.id})">✕</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    initStorage();
+  </script>
+</body>
+</html>
