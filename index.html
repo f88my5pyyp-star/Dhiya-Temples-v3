@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dhiya Temples - Project & Expense Tracker</title>
+  <title>Project & Expense Tracker</title>
   
   <!-- PWA & Theme Integration -->
   <link rel="manifest" href="manifest.json">
@@ -62,18 +62,27 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: var(--bg-color); background-image: var(--bg-gradient); background-attachment: fixed; color: var(--text); padding-bottom: 100px; transition: background 0.4s ease, color 0.4s ease; min-height: 100vh; font-size: 16px; }
 
+    /* ANIMATIONS & MICRO-INTERACTIONS */
+    .btn, .nav-btn, .home-card, .detected-item-chip, .brand, .theme-toggle-btn {
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn:active, .home-card:active, .detected-item-chip:active, .theme-toggle-btn:active {
+      transform: scale(0.93) !important;
+    }
+
     /* HEADER */
-    header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: rgba(var(--bg-color), 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--card-border); }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--card-border); }
     .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
     .brand img { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); border: 2px solid rgba(255, 255, 255, 0.1); }
     .brand-title { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
     /* NAVIGATION */
     .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: var(--card-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 24px rgba(0,0,0,0.1); }
-    .nav-btn { background: none; border: none; color: var(--subtext); display: flex; flex-direction: column; align-items: center; font-size: 0.7rem; gap: 6px; flex: 1; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-weight: 500; }
-    .nav-btn svg { width: 24px; height: 24px; stroke-width: 2px; transition: transform 0.3s; }
-    .nav-btn.active { color: var(--text); font-weight: 700; transform: translateY(-4px); }
-    .nav-btn.active svg { transform: scale(1.15); }
+    .nav-btn { background: none; border: none; color: var(--subtext); display: flex; flex-direction: column; align-items: center; font-size: 0.7rem; gap: 6px; flex: 1; cursor: pointer; font-weight: 500; }
+    .nav-btn svg { width: 24px; height: 24px; stroke-width: 2px; transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .nav-btn.active { color: var(--text); font-weight: 700; transform: translateY(-3px); }
+    .nav-btn.active svg { transform: scale(1.18); }
 
     body[data-tab="dashboard"] .nav-btn[onclick*="dashboard"].active { color: var(--theme-dash); }
     body[data-tab="projects"] .nav-btn[onclick*="projects"].active { color: var(--theme-proj); }
@@ -83,91 +92,97 @@
 
     .container { padding: 24px 20px; max-width: 768px; margin: 0 auto; }
     .page { display: none; opacity: 0; }
-    .page.active { display: block; animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    .page.active { display: block; animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* HOME GRID (Updated wording) */
-    .home-banner { text-align: center; margin-bottom: 24px; padding: 20px; background: var(--card-bg); border-radius: 24px; border: 1px solid var(--card-border); box-shadow: var(--glass-shadow); }
-    .home-banner h1 { font-size: 1.6rem; margin-bottom: 8px; }
+    /* HOME GRID */
+    .home-banner { text-align: center; margin-bottom: 24px; padding: 18px 20px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--card-border); box-shadow: var(--glass-shadow); }
     .home-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-    .home-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 28px 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; box-shadow: var(--glass-shadow); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-    .home-card:active { transform: scale(0.96); }
-    .home-card .icon-wrapper { width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); margin: 0 auto 12px auto; }
+    .home-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 28px 20px; text-align: center; cursor: pointer; box-shadow: var(--glass-shadow); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .home-card .icon-wrapper { width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); margin: 0 auto 12px auto; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .home-card:hover .icon-wrapper { transform: scale(1.1); }
     .home-card-title { font-weight: 700; font-size: 1.1rem; color: var(--text); margin-bottom: 4px; }
     .home-card-desc { font-size: 0.75rem; color: var(--subtext); font-weight: 500; }
 
     .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 24px; margin-bottom: 20px; box-shadow: var(--glass-shadow); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
     h1 { font-size: 1.75rem; font-weight: 800; margin-bottom: 20px; letter-spacing: -0.5px; }
-    h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 16px; }
+    h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; }
 
     /* FORMS & INPUTS */
     .form-group { margin-bottom: 16px; }
     label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--subtext); margin-bottom: 8px; }
-    input, select, textarea { width: 100%; padding: 14px 16px; border-radius: 16px; border: 2px solid var(--input-border); background: var(--input-bg); color: var(--text); font-size: 1rem; outline: none; transition: all 0.2s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); font-weight: 500; }
+    input, select, textarea { width: 100%; padding: 14px 16px; border-radius: 16px; border: 2px solid var(--input-border); background: var(--input-bg); color: var(--text); font-size: 1rem; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; font-weight: 500; }
     input:focus, select:focus { border-color: var(--input-focus); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15); background: var(--card-bg); }
     
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
 
     /* BUTTONS */
-    .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-    .btn:active { transform: scale(0.97); }
+    .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; }
     .btn-dash { background: var(--theme-dash); color: white; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3); }
     .btn-exp  { background: var(--theme-exp); color: white; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3); }
     .btn-danger { background: #ef4444; color: white; }
     .btn-outline { background: transparent; border: 2px solid var(--input-border); color: var(--text); }
     .btn-small { padding: 10px 16px; font-size: 0.85rem; border-radius: 12px; width: auto; }
 
+    /* DASHBOARD WIDGETS */
+    .dash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+    .metric-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 18px; text-align: left; }
+    .metric-value { font-size: 1.4rem; font-weight: 800; margin-top: 6px; }
+    .metric-label { font-size: 0.75rem; color: var(--subtext); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .progress-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-top: 6px; }
+    .progress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+
     /* OCR RECEIPT SCANNER SPECIFICS */
-    .ocr-scanner-box { background: rgba(99, 102, 241, 0.1); border: 2px dashed var(--theme-exp); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 16px; transition: all 0.3s; }
+    .ocr-scanner-box { background: rgba(99, 102, 241, 0.08); border: 2px dashed var(--theme-exp); border-radius: 18px; padding: 20px; text-align: center; margin-bottom: 18px; }
     .ocr-status { font-size: 0.85rem; color: var(--theme-exp); font-weight: 600; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .spinner { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--theme-exp); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     
     .detected-items-container { margin-top: 16px; text-align: left; display: none; }
-    .detected-item-chip { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--card-bg); border: 1px solid var(--input-border); border-radius: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+    .detected-item-chip { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--card-bg); border: 1px solid var(--input-border); border-radius: 14px; margin-bottom: 8px; cursor: pointer; }
     .detected-item-chip:hover { border-color: var(--theme-exp); background: rgba(99, 102, 241, 0.05); }
-    .detected-item-chip:active { transform: scale(0.98); }
 
     /* LIST ITEMS */
-    .item-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--card-border); }
+    .item-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--card-border); }
     .item-row:last-child { border-bottom: none; padding-bottom: 0; }
   </style>
 </head>
 <body data-tab="home">
 
   <header>
-    <div class="brand" onclick="switchTab('home')">
-      <img src="logo.png" alt="Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NCIgaGVpZ2h0PSI0NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMxMGI5ODEiIHN0cm9rZS13aWR0aD0iMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDJMMiA3bDEwIDUgMTAtNS0xMC01ek0yIDE3bDEwIDUgMTAtNSBNMiAxMmwxMCA1IDEwLTUiLz48L3N2Zz4='">
-      <div class="brand-title">Dhiya Temples</div>
+    <div class="brand" onclick="switchTab('home'); triggerHaptic('light');">
+      <img src="logo.png" alt="Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NCIgaGVpZ2h0PSI0NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMxMGI5ODEiIHN0cm9rZS13aWR0aD0iMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDJMMiA3bDEwIDUgMTAtNS0xMC01ek0yIDE3bDEwIDUgMTAtNSBNMiAxMmwxMCA1 IDEwLTUiLz48L3N2Zz4='">
+      <div class="brand-title">Dhiya Services</div>
     </div>
-    <button onclick="toggleDarkMode()" style="background:none; border:none; color:var(--text); cursor:pointer;"><i data-lucide="moon"></i></button>
+    <button class="theme-toggle-btn" onclick="toggleDarkMode(); triggerHaptic('medium');" style="background:none; border:none; color:var(--text); cursor:pointer; padding:8px;"><i data-lucide="moon"></i></button>
   </header>
 
   <div class="container">
     <!-- HOME PAGE -->
     <div id="page-home" class="page active">
       <div class="home-banner">
-        <h1>Temple Management Portal</h1>
-        <p style="color:var(--subtext); font-size:0.9rem;">Select a module below to get started</p>
+        <p style="color:var(--subtext); font-size:0.95rem; font-weight:600;">Welcome back! Select a module to manage your work.</p>
       </div>
 
       <div class="home-grid">
-        <div class="home-card" onclick="switchTab('dashboard')">
+        <div class="home-card" onclick="switchTab('dashboard'); triggerHaptic('light');">
           <div class="icon-wrapper" style="color:var(--theme-dash);"><i data-lucide="layout-dashboard" size="32"></i></div>
           <div class="home-card-title">Dashboard</div>
           <div class="home-card-desc">Budget metrics & feeds</div>
         </div>
-        <div class="home-card" onclick="switchTab('projects')">
+        <div class="home-card" onclick="switchTab('projects'); triggerHaptic('light');">
           <div class="icon-wrapper" style="color:var(--theme-proj);"><i data-lucide="folder-kanban" size="32"></i></div>
           <div class="home-card-title">Projects</div>
           <div class="home-card-desc">Manage schedules</div>
         </div>
-        <div class="home-card" onclick="switchTab('expenses')">
+        <div class="home-card" onclick="switchTab('expenses'); triggerHaptic('light');">
           <div class="icon-wrapper" style="color:var(--theme-exp);"><i data-lucide="receipt" size="32"></i></div>
           <div class="home-card-title">Expenses</div>
           <div class="home-card-desc">Costs & receipts</div>
         </div>
-        <div class="home-card" onclick="switchTab('reports')">
+        <div class="home-card" onclick="switchTab('reports'); triggerHaptic('light');">
           <div class="icon-wrapper" style="color:var(--theme-rep);"><i data-lucide="file-text" size="32"></i></div>
           <div class="home-card-title">Reports</div>
           <div class="home-card-desc">Generate exports</div>
@@ -175,7 +190,7 @@
       </div>
     </div>
 
-    <!-- EXPENSES PAGE (With AI Receipt Scanner) -->
+    <!-- EXPENSES PAGE -->
     <div id="page-expenses" class="page">
       <h1>💸 Expenses</h1>
       
@@ -187,17 +202,17 @@
           <i data-lucide="scan-line" size="32" style="color:var(--theme-exp); margin-bottom:8px;"></i>
           <p style="font-weight:600; margin-bottom:12px;">Smart Receipt Scanner</p>
           <input type="file" id="ocr-file-input" accept="image/*" capture="environment" style="display:none;" onchange="handleOCRUpload(event)">
-          <button type="button" class="btn btn-outline btn-small" onclick="document.getElementById('ocr-file-input').click()" style="margin:0 auto;">
+          <button type="button" class="btn btn-outline btn-small" onclick="triggerHaptic('light'); document.getElementById('ocr-file-input').click();" style="margin:0 auto;">
             <i data-lucide="camera"></i> Capture & Scan Receipt
           </button>
           
           <div class="ocr-status">
             <div class="spinner" id="ocr-spinner"></div>
-            <span id="ocr-status-text">Upload to auto-fill details</span>
+            <span id="ocr-status-text">Upload receipt to extract prices</span>
           </div>
 
           <div id="ocr-results" class="detected-items-container">
-            <p style="font-size:0.8rem; color:var(--subtext); margin-bottom:8px;">Tap an item to add it to the form:</p>
+            <p style="font-size:0.8rem; color:var(--subtext); margin-bottom:8px;">Tap an item to auto-fill form:</p>
             <div id="ocr-chips"></div>
           </div>
         </div>
@@ -206,32 +221,46 @@
           <input type="hidden" id="exp-id">
           <div class="form-group">
             <label>Assigned Project</label>
-            <select id="exp-project-id" required></select>
+            <select id="exp-project-id" required onfocus="triggerHaptic('light')"></select>
           </div>
           <div class="form-group">
             <label>Item Description</label>
-            <input type="text" id="exp-desc" placeholder="e.g. Brass Lamp Sets" required>
+            <input type="text" id="exp-desc" placeholder="e.g. Copper Wire Spool" required onfocus="triggerHaptic('light')">
           </div>
-          <div class="grid-2">
+          
+          <!-- QUANTITY + UOM + UNIT COST GRID -->
+          <div class="grid-3">
             <div class="form-group">
               <label>Quantity</label>
-              <input type="number" id="exp-qty" value="1" min="1" required>
+              <input type="number" id="exp-qty" value="1" min="1" required onfocus="triggerHaptic('light')">
             </div>
             <div class="form-group">
-              <label>Unit Cost ($ AUD)</label>
-              <input type="number" id="exp-unit-cost" step="0.01" placeholder="150.00" required>
+              <label>UOM</label>
+              <select id="exp-uom" onfocus="triggerHaptic('light')">
+                <option value="Pcs">Pcs</option>
+                <option value="Meter">Meter</option>
+                <option value="Hour">Hour</option>
+                <option value="Kg">Kg</option>
+                <option value="Liter">Liter</option>
+                <option value="Box">Box</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Unit Cost ($)</label>
+              <input type="number" id="exp-unit-cost" step="0.01" placeholder="0.00" required onfocus="triggerHaptic('light')">
             </div>
           </div>
+
           <div class="form-group">
             <label>Category</label>
-            <select id="exp-category">
+            <select id="exp-category" onfocus="triggerHaptic('light')">
               <option value="Materials">Materials</option>
               <option value="Hardware">Hardware</option>
               <option value="Labour">Labour</option>
               <option value="Miscellaneous">Miscellaneous</option>
             </select>
           </div>
-          <button type="submit" class="btn btn-exp" style="margin-top:8px;">Save Expense Item</button>
+          <button type="submit" class="btn btn-exp" style="margin-top:8px;" onclick="triggerHaptic('medium')">Save Expense Item</button>
         </form>
       </div>
 
@@ -241,62 +270,122 @@
       </div>
     </div>
 
-    <!-- OTHER PAGES OMITTED FOR BREVITY BUT FULLY FUNCTIONAL -->
-    <!-- DASHBOARD -->
+    <!-- ENHANCED DASHBOARD PAGE -->
     <div id="page-dashboard" class="page">
       <h1>📊 Dashboard</h1>
+      
+      <!-- 4 METRIC CARDS GRID -->
+      <div class="dash-grid">
+        <div class="metric-card">
+          <div class="metric-label">Total Spent</div>
+          <div class="metric-value" style="color:var(--theme-dash);" id="dash-total-spent">$0.00</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Recorded Items</div>
+          <div class="metric-value" id="dash-total-items">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Avg Item Cost</div>
+          <div class="metric-value" id="dash-avg-cost">$0.00</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Top Category</div>
+          <div class="metric-value" style="font-size:1.1rem; color:var(--theme-exp);" id="dash-top-cat">N/A</div>
+        </div>
+      </div>
+
+      <!-- CATEGORY BREAKDOWN CARD -->
       <div class="card">
-        <h2 style="color:var(--theme-dash); font-size:2rem; margin:0;" id="dash-spent">$0.00</h2>
-        <p style="color:var(--subtext); font-weight:600;">Total Expenses Recorded</p>
+        <h2>Category Breakdown</h2>
+        <div id="dash-categories-list">
+          <p style="color:var(--subtext); font-size:0.85rem;">No expenses recorded yet.</p>
+        </div>
+      </div>
+
+      <!-- RECENT ACTIVITY CARD -->
+      <div class="card">
+        <h2>Recent Activity</h2>
+        <div id="dash-recent-list">
+          <p style="color:var(--subtext); font-size:0.85rem;">No recent expenses.</p>
+        </div>
       </div>
     </div>
     
-    <!-- PROJECTS -->
+    <!-- PROJECTS PAGE -->
     <div id="page-projects" class="page">
       <h1>📁 Projects</h1>
-      <div class="card"><h2>Manage Projects</h2><p style="color:var(--subtext);">Add projects to assign expenses.</p></div>
+      <div class="card">
+        <h2>Manage Projects</h2>
+        <p style="color:var(--subtext);">Add projects to organize your expenses effectively.</p>
+      </div>
     </div>
 
-    <!-- REPORTS -->
+    <!-- REPORTS PAGE -->
     <div id="page-reports" class="page">
       <h1>📄 Reports</h1>
-      <div class="card"><h2>Export Data</h2><p style="color:var(--subtext);">Feature ready.</p></div>
+      <div class="card">
+        <h2>Export Data</h2>
+        <p style="color:var(--subtext);">Export summary to PDF or Excel formats.</p>
+      </div>
     </div>
 
-    <!-- SETTINGS -->
+    <!-- SETTINGS PAGE -->
     <div id="page-settings" class="page">
       <h1>⚙️ Settings</h1>
-      <div class="card"><h2>System</h2><p style="color:var(--subtext);">Version 3.0 (Design + OCR Update)</p></div>
+      <div class="card">
+        <h2>System Status</h2>
+        <p style="color:var(--subtext);">Version 3.5 (UOM + Haptic Feedback + Dashboard Refresh)</p>
+      </div>
     </div>
   </div>
 
   <nav class="nav-bar">
-    <button class="nav-btn active" onclick="switchTab('dashboard', this)"><i data-lucide="layout-dashboard"></i>Dash</button>
-    <button class="nav-btn" onclick="switchTab('projects', this)"><i data-lucide="folder-kanban"></i>Projects</button>
-    <button class="nav-btn" onclick="switchTab('home', this)" style="transform:translateY(-10px); background:var(--theme-dash); color:white; border-radius:50%; width:56px; height:56px; flex:none; box-shadow:0 8px 20px rgba(16,185,129,0.4);"><i data-lucide="home" style="width:28px; height:28px;"></i></button>
-    <button class="nav-btn" onclick="switchTab('expenses', this)"><i data-lucide="receipt"></i>Expenses</button>
-    <button class="nav-btn" onclick="switchTab('settings', this)"><i data-lucide="settings"></i>Settings</button>
+    <button class="nav-btn active" onclick="switchTab('dashboard'); triggerHaptic('light');"><i data-lucide="layout-dashboard"></i>Dash</button>
+    <button class="nav-btn" onclick="switchTab('projects'); triggerHaptic('light');"><i data-lucide="folder-kanban"></i>Projects</button>
+    <button class="nav-btn" onclick="switchTab('home'); triggerHaptic('medium');" style="transform:translateY(-10px); background:var(--theme-dash); color:white; border-radius:50%; width:56px; height:56px; flex:none; box-shadow:0 8px 20px rgba(16,185,129,0.4);"><i data-lucide="home" style="width:28px; height:28px;"></i></button>
+    <button class="nav-btn" onclick="switchTab('expenses'); triggerHaptic('light');"><i data-lucide="receipt"></i>Expenses</button>
+    <button class="nav-btn" onclick="switchTab('settings'); triggerHaptic('light');"><i data-lucide="settings"></i>Settings</button>
   </nav>
 
   <script>
-    // Initialize UI Icons
     lucide.createIcons();
 
-    let data = { projects: [{id: 1, title: 'Main Shrine Renovation'}], expenses: [], settings: { darkMode: true } };
+    let data = { 
+      projects: [{id: 1, title: 'Main Project'}], 
+      expenses: [], 
+      settings: { darkMode: true } 
+    };
+
+    // HAPTIC FEEDBACK HELPER
+    function triggerHaptic(type = 'light') {
+      if ('vibrate' in navigator) {
+        try {
+          if (type === 'light') navigator.vibrate(10);
+          else if (type === 'medium') navigator.vibrate(25);
+          else if (type === 'success') navigator.vibrate([15, 30, 20]);
+        } catch(e) {}
+      }
+    }
 
     // TAB SWITCHING LOGIC
-    function switchTab(tabId, el) {
+    function switchTab(tabId) {
       document.body.setAttribute('data-tab', tabId);
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       
       const targetPage = document.getElementById(`page-${tabId}`);
       if (targetPage) targetPage.classList.add('active');
-      if (el) el.classList.add('active');
       
+      const navButtons = document.querySelectorAll('.nav-btn');
+      const navMap = { 'dashboard': 0, 'projects': 1, 'home': 2, 'expenses': 3, 'settings': 4 };
+      if (navMap[tabId] !== undefined && navButtons[navMap[tabId]]) {
+        navButtons[navMap[tabId]].classList.add('active');
+      }
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
       populateProjectDropdown();
       renderExpenses();
+      renderDashboard();
     }
 
     function toggleDarkMode() {
@@ -306,11 +395,12 @@
 
     function populateProjectDropdown() {
       const select = document.getElementById('exp-project-id');
+      if (!select) return;
       select.innerHTML = '';
       data.projects.forEach(p => { select.innerHTML += `<option value="${p.id}">${p.title}</option>`; });
     }
 
-    // --- TESSERACT OCR RECEIPT SCANNER LOGIC ---
+    // TESSERACT OCR RECEIPT SCANNER LOGIC
     async function handleOCRUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -320,21 +410,18 @@
       const resultsContainer = document.getElementById('ocr-results');
       const chipsContainer = document.getElementById('ocr-chips');
 
-      statusText.textContent = "Analyzing receipt text... please wait.";
+      statusText.textContent = "Analyzing receipt text...";
       statusText.style.color = "var(--theme-exp)";
       spinner.style.display = "block";
       resultsContainer.style.display = "none";
       chipsContainer.innerHTML = "";
 
       try {
-        // Initialize Tesseract Worker
         const worker = await Tesseract.createWorker('eng');
         const ret = await worker.recognize(file);
         await worker.terminate();
 
         const text = ret.data.text;
-        
-        // Regex to find prices (e.g., 14.99, $14.99, 1,000.50)
         const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
         const priceRegex = /\$?(\d{1,3}(?:,\d{3})*\.\d{2})/; 
         const parsedItems = [];
@@ -342,45 +429,40 @@
         lines.forEach(line => {
           const match = line.match(priceRegex);
           if (match) {
-            // Clean up the description by removing the price and special characters
             let desc = line.replace(match[0], '').replace(/[^a-zA-Z0-9\s]/g, '').trim();
-            if (desc.length < 2) desc = "Scanned Item"; // Fallback if description is empty
-            
+            if (desc.length < 2) desc = "Scanned Item";
             const price = parseFloat(match[1].replace(',', ''));
-            // Filter out 0.00 or weird micro amounts
-            if (price > 0) {
-              parsedItems.push({ desc: desc, price: price });
-            }
+            if (price > 0) parsedItems.push({ desc: desc, price: price });
           }
         });
 
         spinner.style.display = "none";
 
         if (parsedItems.length > 0) {
+          triggerHaptic('success');
           statusText.textContent = `✅ Found ${parsedItems.length} items.`;
           statusText.style.color = "#10b981";
           
-          // Generate UI Chips for each detected item
-          parsedItems.forEach((item, index) => {
+          parsedItems.forEach((item) => {
             const chip = document.createElement('div');
             chip.className = 'detected-item-chip';
             chip.innerHTML = `
               <div style="font-weight:600;">${item.desc}</div>
               <div style="font-weight:800; color:var(--theme-exp);">$${item.price.toFixed(2)}</div>
             `;
-            // Auto-fill form on click
             chip.onclick = () => {
+              triggerHaptic('light');
               document.getElementById('exp-desc').value = item.desc;
               document.getElementById('exp-unit-cost').value = item.price;
               document.getElementById('exp-qty').value = 1;
+              document.getElementById('exp-uom').value = "Pcs";
               
-              // Visual feedback
               chip.style.borderColor = "#10b981";
               chip.style.background = "rgba(16, 185, 129, 0.1)";
               setTimeout(() => {
                 resultsContainer.style.display = "none";
                 statusText.textContent = "Upload another receipt to scan";
-              }, 400);
+              }, 300);
             };
             chipsContainer.appendChild(chip);
           });
@@ -402,46 +484,135 @@
     // EXPENSE SUBMISSION
     document.getElementById('expense-form').addEventListener('submit', (e) => {
       e.preventDefault();
+      triggerHaptic('success');
+
       const desc = document.getElementById('exp-desc').value;
-      const qty = document.getElementById('exp-qty').value;
-      const unitCost = document.getElementById('exp-unit-cost').value;
+      const qty = parseFloat(document.getElementById('exp-qty').value) || 1;
+      const uom = document.getElementById('exp-uom').value || 'Pcs';
+      const unitCost = parseFloat(document.getElementById('exp-unit-cost').value) || 0;
       const category = document.getElementById('exp-category').value;
       
       data.expenses.unshift({
         id: Date.now(),
         desc, 
-        qty, 
+        qty,
+        uom,
+        unitCost,
         cost: (qty * unitCost),
-        category
+        category,
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
       });
       
       document.getElementById('expense-form').reset();
+      document.getElementById('exp-qty').value = 1;
       renderExpenses();
+      renderDashboard();
     });
 
     function renderExpenses() {
       const list = document.getElementById('expenses-list');
+      if (!list) return;
       list.innerHTML = '';
       
-      let total = 0;
+      if (data.expenses.length === 0) {
+        list.innerHTML = '<p style="color:var(--subtext); font-size:0.85rem; padding: 12px 0;">No expenses recorded yet.</p>';
+        return;
+      }
+
       data.expenses.forEach(e => {
-        total += e.cost;
         list.innerHTML += `
           <div class="item-row">
             <div>
               <div style="font-weight:700;">${e.desc}</div>
-              <div style="font-size:0.8rem; color:var(--subtext);">${e.category} • Qty: ${e.qty}</div>
+              <div style="font-size:0.8rem; color:var(--subtext);">${e.category} • ${e.qty} ${e.uom} @ $${e.unitCost.toFixed(2)}</div>
             </div>
             <div style="font-weight:800; color:var(--text);">$${e.cost.toFixed(2)}</div>
           </div>
         `;
       });
-      document.getElementById('dash-spent').textContent = `$${total.toFixed(2)}`;
     }
 
-    // Initialize
+    // RENDER DETAILED DASHBOARD METRICS
+    function renderDashboard() {
+      const totalSpentEl = document.getElementById('dash-total-spent');
+      if (!totalSpentEl) return;
+
+      const totalSpent = data.expenses.reduce((sum, e) => sum + e.cost, 0);
+      const totalItems = data.expenses.length;
+      const avgCost = totalItems > 0 ? (totalSpent / totalItems) : 0;
+
+      // Group costs by Category
+      const categoryTotals = {};
+      data.expenses.forEach(e => {
+        categoryTotals[e.category] = (categoryTotals[e.category] || 0) + e.cost;
+      });
+
+      let topCategory = 'N/A';
+      let maxCategorySpend = 0;
+      for (const [cat, spend] of Object.entries(categoryTotals)) {
+        if (spend > maxCategorySpend) {
+          maxCategorySpend = spend;
+          topCategory = cat;
+        }
+      }
+
+      // Update Top Metrics
+      totalSpentEl.textContent = `$${totalSpent.toFixed(2)}`;
+      document.getElementById('dash-total-items').textContent = totalItems;
+      document.getElementById('dash-avg-cost').textContent = `$${avgCost.toFixed(2)}`;
+      document.getElementById('dash-top-cat').textContent = topCategory;
+
+      // Render Category Progress Bars
+      const catList = document.getElementById('dash-categories-list');
+      catList.innerHTML = '';
+      const categories = ['Materials', 'Hardware', 'Labour', 'Miscellaneous'];
+      
+      if (totalSpent === 0) {
+        catList.innerHTML = '<p style="color:var(--subtext); font-size:0.85rem;">No expense data available.</p>';
+      } else {
+        categories.forEach(cat => {
+          const spend = categoryTotals[cat] || 0;
+          const percent = totalSpent > 0 ? Math.round((spend / totalSpent) * 100) : 0;
+          catList.innerHTML += `
+            <div style="margin-bottom: 12px;">
+              <div style="display:flex; justify-shadow:space-between; justify-content:space-between; font-size:0.85rem; font-weight:600;">
+                <span>${cat}</span>
+                <span>$${spend.toFixed(2)} (${percent}%)</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: ${percent}%; background: var(--theme-exp);"></div>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      // Render Recent Activity (Top 4)
+      const recentList = document.getElementById('dash-recent-list');
+      recentList.innerHTML = '';
+      if (data.expenses.length === 0) {
+        recentList.innerHTML = '<p style="color:var(--subtext); font-size:0.85rem;">No recent activity.</p>';
+      } else {
+        data.expenses.slice(0, 4).forEach(e => {
+          recentList.innerHTML += `
+            <div class="item-row">
+              <div>
+                <div style="font-weight:600; font-size:0.9rem;">${e.desc}</div>
+                <div style="font-size:0.75rem; color:var(--subtext);">${e.date} • ${e.qty} ${e.uom}</div>
+              </div>
+              <div style="font-weight:700; font-size:0.9rem; color:var(--theme-dash);">$${e.cost.toFixed(2)}</div>
+            </div>
+          `;
+        });
+      }
+    }
+
+    // Initialize Page
     populateProjectDropdown();
     renderExpenses();
+    renderDashboard();
   </script>
 </body>
 </html>
+
+```
