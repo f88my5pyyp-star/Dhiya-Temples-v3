@@ -12,7 +12,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="logo.png">
 
-  <!-- External Libraries: Google Fonts, PDF, Excel, Icons, and Tesseract.js (OCR) -->
+  <!-- External Libraries -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -22,7 +22,7 @@
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <style>
-    /* PREMIUM UI/UX DESIGN SYSTEM */
+    /* DESIGN SYSTEM */
     :root[data-theme="dark"] {
       --bg-color: #0f172a;
       --bg-gradient: radial-gradient(circle at top left, #1e293b 0%, #0f172a 100%);
@@ -120,6 +120,7 @@
     /* BUTTONS */
     .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; }
     .btn-dash { background: var(--theme-dash); color: white; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3); }
+    .btn-proj { background: var(--theme-proj); color: white; box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3); }
     .btn-exp  { background: var(--theme-exp); color: white; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3); }
     .btn-danger { background: #ef4444; color: white; }
     .btn-outline { background: transparent; border: 2px solid var(--input-border); color: var(--text); }
@@ -153,7 +154,7 @@
 
   <header>
     <div class="brand" onclick="switchTab('home'); triggerHaptic('light');">
-      <img src="logo.png" alt="Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NCIgaGVpZ2h0PSI0NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMxMGI5ODEiIHN0cm9rZS13aWR0aD0iMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDJMMiA3bDEwIDUgMTAtNS0xMC01ek0yIDE3bDEwIDUgMTAtNSBNMiAxMmwxMCA1 IDEwLTUiLz48L3N2Zz4='">
+      <img src="logo.png" alt="Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NCIgaGVpZ2h0PSI0NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMxMGI5ODEiIHN0cm9rZS13aWR0aD0iMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDJMMiA3bDEwIDUgMTAtNS0xMC01ek0y IDE3bDEwIDUgMTAtNSBNMiAxMmwxMCA1 IDEwLTUiLz48L3N2Zz4='">
       <div class="brand-title">Dhiya Services</div>
     </div>
     <button class="theme-toggle-btn" onclick="toggleDarkMode(); triggerHaptic('medium');" style="background:none; border:none; color:var(--text); cursor:pointer; padding:8px;"><i data-lucide="moon"></i></button>
@@ -187,6 +188,33 @@
           <div class="home-card-title">Reports</div>
           <div class="home-card-desc">Generate exports</div>
         </div>
+      </div>
+    </div>
+
+    <!-- FULLY FUNCTIONAL PROJECTS PAGE -->
+    <div id="page-projects" class="page">
+      <h1>📁 Projects</h1>
+      
+      <!-- ADD NEW PROJECT FORM -->
+      <div class="card">
+        <h2>Add New Project</h2>
+        <form id="project-form">
+          <div class="form-group">
+            <label>Project Title</label>
+            <input type="text" id="proj-title" placeholder="e.g. Main Shrine Renovation" required onfocus="triggerHaptic('light')">
+          </div>
+          <div class="form-group">
+            <label>Allocated Budget ($)</label>
+            <input type="number" id="proj-budget" step="0.01" placeholder="5000.00" required onfocus="triggerHaptic('light')">
+          </div>
+          <button type="submit" class="btn btn-proj" style="margin-top:8px;" onclick="triggerHaptic('medium')">Create Project</button>
+        </form>
+      </div>
+
+      <!-- ACTIVE PROJECTS LIST -->
+      <div class="card">
+        <h2>Active Projects</h2>
+        <div id="projects-list"></div>
       </div>
     </div>
 
@@ -228,7 +256,6 @@
             <input type="text" id="exp-desc" placeholder="e.g. Copper Wire Spool" required onfocus="triggerHaptic('light')">
           </div>
           
-          <!-- QUANTITY + UOM + UNIT COST GRID -->
           <div class="grid-3">
             <div class="form-group">
               <label>Quantity</label>
@@ -270,11 +297,10 @@
       </div>
     </div>
 
-    <!-- ENHANCED DASHBOARD PAGE -->
+    <!-- DASHBOARD PAGE -->
     <div id="page-dashboard" class="page">
       <h1>📊 Dashboard</h1>
       
-      <!-- 4 METRIC CARDS GRID -->
       <div class="dash-grid">
         <div class="metric-card">
           <div class="metric-label">Total Spent</div>
@@ -294,7 +320,6 @@
         </div>
       </div>
 
-      <!-- CATEGORY BREAKDOWN CARD -->
       <div class="card">
         <h2>Category Breakdown</h2>
         <div id="dash-categories-list">
@@ -302,7 +327,6 @@
         </div>
       </div>
 
-      <!-- RECENT ACTIVITY CARD -->
       <div class="card">
         <h2>Recent Activity</h2>
         <div id="dash-recent-list">
@@ -311,21 +335,12 @@
       </div>
     </div>
     
-    <!-- PROJECTS PAGE -->
-    <div id="page-projects" class="page">
-      <h1>📁 Projects</h1>
-      <div class="card">
-        <h2>Manage Projects</h2>
-        <p style="color:var(--subtext);">Add projects to organize your expenses effectively.</p>
-      </div>
-    </div>
-
     <!-- REPORTS PAGE -->
     <div id="page-reports" class="page">
       <h1>📄 Reports</h1>
       <div class="card">
         <h2>Export Data</h2>
-        <p style="color:var(--subtext);">Export summary to PDF or Excel formats.</p>
+        <p style="color:var(--subtext);">Summary metrics ready for export.</p>
       </div>
     </div>
 
@@ -334,7 +349,7 @@
       <h1>⚙️ Settings</h1>
       <div class="card">
         <h2>System Status</h2>
-        <p style="color:var(--subtext);">Version 3.5 (UOM + Haptic Feedback + Dashboard Refresh)</p>
+        <p style="color:var(--subtext);">Version 3.6 (Projects Engine Enabled)</p>
       </div>
     </div>
   </div>
@@ -351,12 +366,12 @@
     lucide.createIcons();
 
     let data = { 
-      projects: [{id: 1, title: 'Main Project'}], 
+      projects: [{id: 101, title: 'Main Project', budget: 5000}], 
       expenses: [], 
       settings: { darkMode: true } 
     };
 
-    // HAPTIC FEEDBACK HELPER
+    // HAPTIC FEEDBACK
     function triggerHaptic(type = 'light') {
       if ('vibrate' in navigator) {
         try {
@@ -367,7 +382,7 @@
       }
     }
 
-    // TAB SWITCHING LOGIC
+    // TAB SWITCHING
     function switchTab(tabId) {
       document.body.setAttribute('data-tab', tabId);
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -384,6 +399,7 @@
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
       populateProjectDropdown();
+      renderProjects();
       renderExpenses();
       renderDashboard();
     }
@@ -393,10 +409,86 @@
       document.documentElement.setAttribute('data-theme', data.settings.darkMode ? 'dark' : 'light');
     }
 
+    // PROJECT MANAGEMENT LOGIC
+    document.getElementById('project-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      triggerHaptic('success');
+
+      const title = document.getElementById('proj-title').value.trim();
+      const budget = parseFloat(document.getElementById('proj-budget').value) || 0;
+
+      if (!title) return;
+
+      data.projects.push({
+        id: Date.now(),
+        title,
+        budget
+      });
+
+      document.getElementById('project-form').reset();
+      populateProjectDropdown();
+      renderProjects();
+    });
+
+    function renderProjects() {
+      const list = document.getElementById('projects-list');
+      if (!list) return;
+      list.innerHTML = '';
+
+      if (data.projects.length === 0) {
+        list.innerHTML = '<p style="color:var(--subtext); font-size:0.85rem; padding: 8px 0;">No active projects. Add one above!</p>';
+        return;
+      }
+
+      data.projects.forEach(p => {
+        const projectExpenses = data.expenses.filter(e => String(e.projectId) === String(p.id));
+        const spent = projectExpenses.reduce((sum, e) => sum + e.cost, 0);
+        const percent = p.budget > 0 ? Math.min(Math.round((spent / p.budget) * 100), 100) : 0;
+        const overBudget = spent > p.budget && p.budget > 0;
+
+        list.innerHTML += `
+          <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; margin-bottom: 12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+              <div>
+                <div style="font-weight:700; font-size:1.05rem;">${p.title}</div>
+                <div style="font-size:0.8rem; color:var(--subtext);">${projectExpenses.length} expense item(s)</div>
+              </div>
+              <button class="btn btn-outline btn-small" onclick="deleteProject(${p.id}); triggerHaptic('medium');" style="color:#ef4444; border-color:rgba(239, 68, 68, 0.3); padding:8px 12px;">
+                <i data-lucide="trash-2" size="16"></i>
+              </button>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:600; margin-top:12px;">
+              <span>Spent: $${spent.toFixed(2)}</span>
+              <span style="color:${overBudget ? '#ef4444' : 'var(--subtext)'};">Budget: $${p.budget.toFixed(2)}</span>
+            </div>
+            
+            <div class="progress-bar-bg" style="margin-top:8px;">
+              <div class="progress-bar-fill" style="width: ${percent}%; background: ${overBudget ? '#ef4444' : 'var(--theme-proj)'};"></div>
+            </div>
+          </div>
+        `;
+      });
+      lucide.createIcons();
+    }
+
+    function deleteProject(id) {
+      if (confirm('Are you sure you want to delete this project?')) {
+        data.projects = data.projects.filter(p => p.id !== id);
+        populateProjectDropdown();
+        renderProjects();
+        renderDashboard();
+      }
+    }
+
     function populateProjectDropdown() {
       const select = document.getElementById('exp-project-id');
       if (!select) return;
       select.innerHTML = '';
+      if (data.projects.length === 0) {
+        select.innerHTML = '<option value="">-- No Projects Available --</option>';
+        return;
+      }
       data.projects.forEach(p => { select.innerHTML += `<option value="${p.id}">${p.title}</option>`; });
     }
 
@@ -484,6 +576,13 @@
     // EXPENSE SUBMISSION
     document.getElementById('expense-form').addEventListener('submit', (e) => {
       e.preventDefault();
+      
+      const projectId = document.getElementById('exp-project-id').value;
+      if (!projectId) {
+        alert('Please create or select a project first!');
+        return;
+      }
+
       triggerHaptic('success');
 
       const desc = document.getElementById('exp-desc').value;
@@ -494,6 +593,7 @@
       
       data.expenses.unshift({
         id: Date.now(),
+        projectId,
         desc, 
         qty,
         uom,
@@ -506,6 +606,7 @@
       document.getElementById('expense-form').reset();
       document.getElementById('exp-qty').value = 1;
       renderExpenses();
+      renderProjects();
       renderDashboard();
     });
 
@@ -520,11 +621,14 @@
       }
 
       data.expenses.forEach(e => {
+        const proj = data.projects.find(p => String(p.id) === String(e.projectId));
+        const projTitle = proj ? proj.title : 'General';
+
         list.innerHTML += `
           <div class="item-row">
             <div>
               <div style="font-weight:700;">${e.desc}</div>
-              <div style="font-size:0.8rem; color:var(--subtext);">${e.category} • ${e.qty} ${e.uom} @ $${e.unitCost.toFixed(2)}</div>
+              <div style="font-size:0.8rem; color:var(--subtext);">${projTitle} • ${e.category} • ${e.qty} ${e.uom} @ $${e.unitCost.toFixed(2)}</div>
             </div>
             <div style="font-weight:800; color:var(--text);">$${e.cost.toFixed(2)}</div>
           </div>
@@ -532,7 +636,7 @@
       });
     }
 
-    // RENDER DETAILED DASHBOARD METRICS
+    // RENDER DASHBOARD METRICS
     function renderDashboard() {
       const totalSpentEl = document.getElementById('dash-total-spent');
       if (!totalSpentEl) return;
@@ -541,7 +645,6 @@
       const totalItems = data.expenses.length;
       const avgCost = totalItems > 0 ? (totalSpent / totalItems) : 0;
 
-      // Group costs by Category
       const categoryTotals = {};
       data.expenses.forEach(e => {
         categoryTotals[e.category] = (categoryTotals[e.category] || 0) + e.cost;
@@ -556,13 +659,11 @@
         }
       }
 
-      // Update Top Metrics
       totalSpentEl.textContent = `$${totalSpent.toFixed(2)}`;
       document.getElementById('dash-total-items').textContent = totalItems;
       document.getElementById('dash-avg-cost').textContent = `$${avgCost.toFixed(2)}`;
       document.getElementById('dash-top-cat').textContent = topCategory;
 
-      // Render Category Progress Bars
       const catList = document.getElementById('dash-categories-list');
       catList.innerHTML = '';
       const categories = ['Materials', 'Hardware', 'Labour', 'Miscellaneous'];
@@ -575,7 +676,7 @@
           const percent = totalSpent > 0 ? Math.round((spend / totalSpent) * 100) : 0;
           catList.innerHTML += `
             <div style="margin-bottom: 12px;">
-              <div style="display:flex; justify-shadow:space-between; justify-content:space-between; font-size:0.85rem; font-weight:600;">
+              <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:600;">
                 <span>${cat}</span>
                 <span>$${spend.toFixed(2)} (${percent}%)</span>
               </div>
@@ -587,7 +688,6 @@
         });
       }
 
-      // Render Recent Activity (Top 4)
       const recentList = document.getElementById('dash-recent-list');
       recentList.innerHTML = '';
       if (data.expenses.length === 0) {
@@ -607,12 +707,11 @@
       }
     }
 
-    // Initialize Page
+    // Initialize Application
     populateProjectDropdown();
+    renderProjects();
     renderExpenses();
     renderDashboard();
   </script>
 </body>
 </html>
-
-```
