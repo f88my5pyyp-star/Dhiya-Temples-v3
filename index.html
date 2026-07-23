@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Project & Expense Tracker</title>
+  <title>My BuildTrack - DIY Project & Expense Tracker</title>
   
   <!-- PWA & Theme Integration -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f172a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="logo.png">
 
   <!-- External Libraries -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,6 +61,52 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: var(--bg-color); background-image: var(--bg-gradient); background-attachment: fixed; color: var(--text); padding-bottom: 100px; transition: background 0.4s ease, color 0.4s ease; min-height: 100vh; font-size: 16px; }
 
+    /* WEB LAUNCH / SPLASH SCREEN */
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      background: #0f172a;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+    .splash-logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      animation: pulseIn 0.8s ease-out;
+    }
+    @keyframes pulseIn {
+      0% { opacity: 0; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .splash-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10b981, #0ea5e9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .splash-sub {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    .splash-loader {
+      margin-top: 32px;
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: #10b981;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
     /* ANIMATIONS & MICRO-INTERACTIONS */
     .btn, .nav-btn, .home-card, .detected-item-chip, .brand, .theme-toggle-btn {
       transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
@@ -74,8 +119,7 @@
     /* HEADER */
     header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--card-border); }
     .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-    .brand img { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); border: 2px solid rgba(255, 255, 255, 0.1); }
-    .brand-title { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .brand-title { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #10b981, #0ea5e9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
     /* NAVIGATION */
     .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: var(--card-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 24px rgba(0,0,0,0.1); }
@@ -96,7 +140,7 @@
     @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
     /* HOME GRID */
-    .home-banner { text-align: center; margin-bottom: 24px; padding: 18px 20px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--card-border); box-shadow: var(--glass-shadow); }
+    .home-banner { text-align: center; margin-bottom: 24px; padding: 20px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--card-border); box-shadow: var(--glass-shadow); }
     .home-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .home-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 28px 20px; text-align: center; cursor: pointer; box-shadow: var(--glass-shadow); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
     .home-card .icon-wrapper { width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); margin: 0 auto 12px auto; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -152,10 +196,45 @@
 </head>
 <body data-tab="home">
 
+  <!-- LAUNCH / SPLASH SCREEN OVERLAY -->
+  <div id="splash-screen">
+    <div class="splash-logo-container">
+      <svg width="64" height="64" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="url(#splash-grad)"/>
+        <path d="M10 27L20 11L30 27H10Z" stroke="white" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M15 22H25" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M10 29L18 32L30 23" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="splash-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#10b981"/>
+            <stop offset="1" stop-color="#0ea5e9"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div style="text-align:center;">
+        <div class="splash-title">My BuildTrack</div>
+        <div class="splash-sub">DIY Project & Expense Tracker</div>
+      </div>
+    </div>
+    <div class="splash-loader"></div>
+  </div>
+
   <header>
     <div class="brand" onclick="switchTab('home'); triggerHaptic('light');">
-      <img src="logo.png" alt="Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NCIgaGVpZ2h0PSI0NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMxMGI5ODEiIHN0cm9rZS13aWR0aD0iMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDJMMiA3bDEwIDUgMTAtNS0xMC01ek0y IDE3bDEwIDUgMTAtNSBNMiAxMmwxMCA1 IDEwLTUiLz48L3N2Zz4='">
-      <div class="brand-title">Dhiya Services</div>
+      <!-- Embedded Vector Logo -->
+      <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="url(#header-grad)"/>
+        <path d="M10 27L20 11L30 27H10Z" stroke="white" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M15 22H25" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M10 29L18 32L30 23" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="header-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#10b981"/>
+            <stop offset="1" stop-color="#0ea5e9"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="brand-title">My BuildTrack</div>
     </div>
     <button class="theme-toggle-btn" onclick="toggleDarkMode(); triggerHaptic('medium');" style="background:none; border:none; color:var(--text); cursor:pointer; padding:8px;"><i data-lucide="moon"></i></button>
   </header>
@@ -164,7 +243,8 @@
     <!-- HOME PAGE -->
     <div id="page-home" class="page active">
       <div class="home-banner">
-        <p style="color:var(--subtext); font-size:0.95rem; font-weight:600;">Welcome back! Select a module to manage your work.</p>
+        <h2 style="font-size:1.3rem; margin-bottom:4px;">Welcome to My BuildTrack!</h2>
+        <p style="color:var(--subtext); font-size:0.9rem; font-weight:500;">Plan builds, scan material receipts, and keep every DIY budget on track.</p>
       </div>
 
       <div class="home-grid">
@@ -176,12 +256,12 @@
         <div class="home-card" onclick="switchTab('projects'); triggerHaptic('light');">
           <div class="icon-wrapper" style="color:var(--theme-proj);"><i data-lucide="folder-kanban" size="32"></i></div>
           <div class="home-card-title">Projects</div>
-          <div class="home-card-desc">Manage schedules</div>
+          <div class="home-card-desc">Manage builds</div>
         </div>
         <div class="home-card" onclick="switchTab('expenses'); triggerHaptic('light');">
           <div class="icon-wrapper" style="color:var(--theme-exp);"><i data-lucide="receipt" size="32"></i></div>
           <div class="home-card-title">Expenses</div>
-          <div class="home-card-desc">Costs & receipts</div>
+          <div class="home-card-desc">Receipt scanner & logs</div>
         </div>
         <div class="home-card" onclick="switchTab('reports'); triggerHaptic('light');">
           <div class="icon-wrapper" style="color:var(--theme-rep);"><i data-lucide="file-text" size="32"></i></div>
@@ -191,9 +271,9 @@
       </div>
     </div>
 
-    <!-- FULLY FUNCTIONAL PROJECTS PAGE -->
+    <!-- PROJECTS PAGE -->
     <div id="page-projects" class="page">
-      <h1>📁 Projects</h1>
+      <h1>📁 Build Projects</h1>
       
       <!-- ADD NEW PROJECT FORM -->
       <div class="card">
@@ -201,11 +281,11 @@
         <form id="project-form">
           <div class="form-group">
             <label>Project Title</label>
-            <input type="text" id="proj-title" placeholder="e.g. Main Shrine Renovation" required onfocus="triggerHaptic('light')">
+            <input type="text" id="proj-title" placeholder="e.g. Patio Deck Build" required onfocus="triggerHaptic('light')">
           </div>
           <div class="form-group">
             <label>Allocated Budget ($)</label>
-            <input type="number" id="proj-budget" step="0.01" placeholder="5000.00" required onfocus="triggerHaptic('light')">
+            <input type="number" id="proj-budget" step="0.01" placeholder="3500.00" required onfocus="triggerHaptic('light')">
           </div>
           <button type="submit" class="btn btn-proj" style="margin-top:8px;" onclick="triggerHaptic('medium')">Create Project</button>
         </form>
@@ -253,7 +333,7 @@
           </div>
           <div class="form-group">
             <label>Item Description</label>
-            <input type="text" id="exp-desc" placeholder="e.g. Copper Wire Spool" required onfocus="triggerHaptic('light')">
+            <input type="text" id="exp-desc" placeholder="e.g. 2x4 Pressure Treated Lumber" required onfocus="triggerHaptic('light')">
           </div>
           
           <div class="grid-3">
@@ -349,7 +429,7 @@
       <h1>⚙️ Settings</h1>
       <div class="card">
         <h2>System Status</h2>
-        <p style="color:var(--subtext);">Version 3.6 (Projects Engine Enabled)</p>
+        <p style="color:var(--subtext);">My BuildTrack • Version 4.0</p>
       </div>
     </div>
   </div>
@@ -365,8 +445,19 @@
   <script>
     lucide.createIcons();
 
+    // HIDE SPLASH SCREEN ON LAUNCH
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+          splash.style.opacity = '0';
+          setTimeout(() => splash.style.display = 'none', 400);
+        }
+      }, 1600);
+    });
+
     let data = { 
-      projects: [{id: 101, title: 'Main Project', budget: 5000}], 
+      projects: [{id: 101, title: 'Patio Deck Build', budget: 3500}], 
       expenses: [], 
       settings: { darkMode: true } 
     };
