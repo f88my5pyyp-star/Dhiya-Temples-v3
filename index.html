@@ -12,24 +12,25 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="logo.png">
 
-  <!-- External Libraries for PDF & Excel Generation -->
+  <!-- External Libraries for PDF, Excel & Modern Icons -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
     :root[data-theme="dark"] {
       --bg-color: #0b0f19;
-      --card-bg: rgba(22, 30, 49, 0.75);
+      --card-bg: rgba(18, 24, 38, 0.82);
       --card-border: rgba(255, 255, 255, 0.08);
       --text: #f3f4f6;
       --subtext: #9ca3af;
       --input-bg: #111827;
       --input-border: #374151;
-      --header-glow: radial-gradient(circle at 50% -20%, rgba(217, 70, 239, 0.15), transparent 70%);
-      --theme-home: #f472b6;
-      --theme-dash: #d946ef;
+      --header-glow: radial-gradient(circle at 50% -20%, rgba(16, 185, 129, 0.15), transparent 70%);
+      --theme-home: #34d399;
+      --theme-dash: #10b981;
       --theme-proj: #06b6d4;
-      --theme-exp: #10b981;
+      --theme-exp: #3b82f6;
       --theme-rep: #f59e0b;
       --theme-set: #8b5cf6;
     }
@@ -37,34 +38,68 @@
     :root[data-theme="light"] {
       --bg-color: #f8fafc;
       --card-bg: #ffffff;
-      --card-border: rgba(0, 0, 0, 0.08);
+      --card-border: rgba(0, 0, 0, 0.06);
       --text: #1f2937;
       --subtext: #6b7280;
       --input-bg: #f1f5f9;
       --input-border: #cbd5e1;
-      --header-glow: radial-gradient(circle at 50% -20%, rgba(217, 70, 239, 0.08), transparent 70%);
-      --theme-home: #ec4899;
-      --theme-dash: #c026d3;
+      --header-glow: radial-gradient(circle at 50% -20%, rgba(16, 185, 129, 0.08), transparent 70%);
+      --theme-home: #059669;
+      --theme-dash: #047857;
       --theme-proj: #0891b2;
-      --theme-exp: #059669;
+      --theme-exp: #2563eb;
       --theme-rep: #d97706;
       --theme-set: #7c3aed;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: var(--bg-color); color: var(--text); padding-bottom: 90px; transition: background 0.3s ease, color 0.3s ease; background-image: var(--header-glow); background-repeat: no-repeat; min-height: 100vh; }
+    body { background-color: var(--bg-color); color: var(--text); padding-bottom: 96px; transition: background 0.3s ease, color 0.3s ease; background-image: var(--header-glow); background-repeat: no-repeat; min-height: 100vh; }
 
-    /* CLICKABLE & ENLARGED BRAND LOGO HEADER */
-    header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: rgba(11, 15, 25, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--card-border); }
+    /* MODERN LAUNCH SPLASH SCREEN */
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      background-color: #042f1a;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
+    }
+    .splash-logo {
+      width: 92px;
+      height: 92px;
+      border-radius: 22px;
+      object-fit: cover;
+      box-shadow: 0 0 35px rgba(16, 185, 129, 0.5);
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      animation: splashPulse 1.6s ease-in-out infinite;
+    }
+    .splash-title {
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: #ffffff;
+      letter-spacing: -0.4px;
+      animation: splashPulse 1.6s ease-in-out infinite;
+    }
+    @keyframes splashPulse {
+      0%, 100% { opacity: 0.35; transform: scale(0.96); }
+      50% { opacity: 1; transform: scale(1.04); }
+    }
+
+    /* MODERN GLASS HEADER */
+    header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: rgba(11, 15, 25, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--card-border); }
     .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; transition: transform 0.15s ease; user-select: none; }
     .brand:active { transform: scale(0.96); }
-    .brand img { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; box-shadow: 0 0 16px rgba(217, 70, 239, 0.45); border: 1.5px solid rgba(255, 255, 255, 0.15); }
-    .brand-title { font-weight: 800; font-size: 1.2rem; letter-spacing: -0.3px; background: linear-gradient(135deg, #f472b6, #d946ef); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .brand img { width: 42px; height: 42px; border-radius: 12px; object-fit: cover; box-shadow: 0 0 16px rgba(16, 185, 129, 0.4); border: 1.5px solid rgba(255, 255, 255, 0.15); }
+    .brand-title { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.3px; background: linear-gradient(135deg, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-    /* NAVIGATION BAR */
-    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 68px; background: rgba(11, 15, 25, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-    .nav-btn { background: none; border: none; color: var(--subtext); display: flex; flex-direction: column; align-items: center; font-size: 0.68rem; gap: 3px; flex: 1; cursor: pointer; transition: color 0.2s, transform 0.1s; }
-    .nav-btn .icon { font-size: 1.25rem; }
+    /* MODERN BOTTOM NAVIGATION BAR */
+    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 72px; background: rgba(11, 15, 25, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+    .nav-btn { background: none; border: none; color: var(--subtext); display: flex; flex-direction: column; align-items: center; font-size: 0.68rem; gap: 4px; flex: 1; cursor: pointer; transition: color 0.2s, transform 0.1s; }
+    .nav-btn svg { width: 22px; height: 22px; stroke-width: 2px; }
     .nav-btn.active { color: var(--text); font-weight: 700; }
 
     body[data-tab="home"] .nav-btn[onclick*="home"] { color: var(--theme-home); }
@@ -74,36 +109,37 @@
     body[data-tab="reports"] .nav-btn[onclick*="reports"] { color: var(--theme-rep); }
     body[data-tab="settings"] .nav-btn[onclick*="settings"] { color: var(--theme-set); }
 
-    .container { padding: 16px; max-width: 650px; margin: 0 auto; }
+    .container { padding: 18px; max-width: 650px; margin: 0 auto; }
     .page { display: none; }
-    .page.active { display: block; animation: pageSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
-    @keyframes pageSlideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .page.active { display: block; animation: pageSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes pageSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* HOME PAGE TILES GRID */
-    .home-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 10px; }
-    .home-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 20px 14px; text-align: center; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    /* HOME PAGE MODERN TILES GRID */
+    .home-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 12px; }
+    .home-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 22px 16px; text-align: center; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
     .home-card:active { transform: scale(0.97); }
-    .home-card .icon-wrapper { font-size: 2.2rem; line-height: 1; margin-bottom: 2px; }
-    .home-card-title { font-weight: 800; font-size: 0.95rem; color: var(--text); }
-    .home-card-desc { font-size: 0.72rem; color: var(--subtext); line-height: 1.25; }
+    .home-card .icon-wrapper { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.04); border: 1px solid var(--card-border); margin-bottom: 2px; }
+    .home-card .icon-wrapper svg { width: 24px; height: 24px; }
+    .home-card-title { font-weight: 800; font-size: 0.98rem; color: var(--text); }
+    .home-card-desc { font-size: 0.74rem; color: var(--subtext); line-height: 1.3; }
 
-    .home-card[data-target="dashboard"]:hover { border-color: var(--theme-dash); box-shadow: 0 8px 20px rgba(217, 70, 239, 0.2); }
-    .home-card[data-target="projects"]:hover { border-color: var(--theme-proj); box-shadow: 0 8px 20px rgba(6, 182, 212, 0.2); }
-    .home-card[data-target="expenses"]:hover { border-color: var(--theme-exp); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2); }
-    .home-card[data-target="reports"]:hover { border-color: var(--theme-rep); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.2); }
-    .home-card[data-target="settings"]:hover { border-color: var(--theme-set); box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2); }
+    .home-card[data-target="dashboard"]:hover { border-color: var(--theme-dash); box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2); }
+    .home-card[data-target="projects"]:hover { border-color: var(--theme-proj); box-shadow: 0 8px 24px rgba(6, 182, 212, 0.2); }
+    .home-card[data-target="expenses"]:hover { border-color: var(--theme-exp); box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2); }
+    .home-card[data-target="reports"]:hover { border-color: var(--theme-rep); box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2); }
+    .home-card[data-target="settings"]:hover { border-color: var(--theme-set); box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2); }
 
-    .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 18px; margin-bottom: 16px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
-    h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 16px; }
+    .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; margin-bottom: 16px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    h1 { font-size: 1.55rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.4px; }
     h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .metric-box { padding: 14px; border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); }
-    .metric-title { font-size: 0.75rem; color: var(--subtext); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-    .metric-value { font-size: 1.25rem; font-weight: 800; margin-top: 4px; }
+    .metric-box { padding: 16px; border-radius: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); }
+    .metric-title { font-size: 0.75rem; color: var(--subtext); text-transform: uppercase; font-weight: 700; letter-spacing: 0.6px; }
+    .metric-value { font-size: 1.35rem; font-weight: 800; margin-top: 6px; letter-spacing: -0.3px; }
 
-    .progress-bar-bg { background: rgba(255,255,255,0.1); height: 10px; border-radius: 99px; overflow: hidden; margin-top: 10px; }
-    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #d946ef, #8b5cf6); border-radius: 99px; transition: width 0.4s ease, background 0.3s ease; }
+    .progress-bar-bg { background: rgba(255,255,255,0.08); height: 10px; border-radius: 99px; overflow: hidden; margin-top: 10px; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #10b981, #06b6d4); border-radius: 99px; transition: width 0.4s ease, background 0.3s ease; }
 
     /* BUDGET THRESHOLD ALERT STYLES */
     .badge-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important; color: #ffffff !important; box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
@@ -111,41 +147,47 @@
     .progress-warning { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%) !important; box-shadow: 0 0 12px rgba(245, 158, 11, 0.6) !important; }
     .progress-danger  { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%) !important; box-shadow: 0 0 12px rgba(239, 68, 68, 0.6) !important; }
 
-    .alert-banner { padding: 10px 14px; border-radius: 12px; font-size: 0.85rem; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; animation: pageSlideIn 0.3s ease-out; }
+    .alert-banner { padding: 12px 16px; border-radius: 14px; font-size: 0.85rem; font-weight: 800; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; animation: pageSlideIn 0.3s ease-out; }
     .alert-banner-warning { background: rgba(245, 158, 11, 0.15); border: 1.5px solid #f59e0b; color: #fbbf24; }
     .alert-banner-danger  { background: rgba(239, 68, 68, 0.15);  border: 1.5px solid #ef4444; color: #f87171; }
 
     .form-group { margin-bottom: 14px; }
-    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--subtext); margin-bottom: 6px; }
-    input, select, textarea { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text); font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
-    input:focus, select:focus { border-color: var(--theme-dash); }
+    label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--subtext); margin-bottom: 6px; }
+    input, select, textarea { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text); font-size: 0.95rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+    input:focus, select:focus { border-color: var(--theme-dash); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
 
-    .btn { width: 100%; padding: 13px; border-radius: 12px; border: none; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: transform 0.1s, opacity 0.2s; }
+    .btn { width: 100%; padding: 14px; border-radius: 14px; border: none; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: transform 0.1s, opacity 0.2s, box-shadow 0.2s; }
     .btn:active { transform: scale(0.98); }
-    .btn-dash { background: linear-gradient(135deg, #d946ef, #c026d3); color: white; }
-    .btn-proj { background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; }
-    .btn-exp  { background: linear-gradient(135deg, #10b981, #059669); color: white; }
-    .btn-rep  { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
-    .btn-danger { background: #ef4444; color: white; }
-    .btn-small { padding: 6px 12px; font-size: 0.75rem; border-radius: 8px; width: auto; }
+    .btn-dash { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3); }
+    .btn-proj { background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; box-shadow: 0 4px 14px rgba(6, 182, 212, 0.3); }
+    .btn-exp  { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3); }
+    .btn-rep  { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3); }
+    .btn-danger { background: #ef4444; color: white; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3); }
+    .btn-small { padding: 8px 14px; font-size: 0.78rem; border-radius: 10px; width: auto; font-weight: 700; }
 
-    .item-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--card-border); }
+    .item-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--card-border); }
     .item-row:last-child { border-bottom: none; }
-    .badge { padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+    .badge { padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; }
     .badge-active { background: rgba(16, 185, 129, 0.2); color: #10b981; }
     .badge-planning { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
     .badge-completed { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
-    .cat-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: rgba(255, 255, 255, 0.08); color: var(--subtext); }
+    .cat-badge { font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; background: rgba(255, 255, 255, 0.06); color: var(--subtext); font-weight: 600; border: 1px solid var(--card-border); }
 
-    .btn-group { display: flex; gap: 6px; }
-    .item-link { font-size: 0.75rem; color: var(--theme-proj); text-decoration: none; display: inline-block; margin-top: 4px; font-weight: 600; cursor: pointer; }
+    .btn-group { display: flex; gap: 8px; }
+    .item-link { font-size: 0.78rem; color: var(--theme-proj); text-decoration: none; display: inline-block; margin-top: 4px; font-weight: 700; cursor: pointer; }
 
     /* Modal for Image Preview */
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(10px); justify-content: center; align-items: center; padding: 20px; }
-    .modal-content { max-width: 100%; max-height: 80vh; border-radius: 12px; object-fit: contain; }
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(12px); justify-content: center; align-items: center; padding: 20px; }
+    .modal-content { max-width: 100%; max-height: 80vh; border-radius: 16px; object-fit: contain; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
   </style>
 </head>
 <body data-tab="home">
+
+  <!-- MODERN LAUNCH SPLASH SCREEN -->
+  <div id="splash-screen">
+    <img src="logo.png" alt="Dhiya Temples Logo" class="splash-logo">
+    <div class="splash-title">Dhiya Temples</div>
+  </div>
 
   <!-- CLICKABLE BRAND HEADER -->
   <header>
@@ -153,42 +195,42 @@
       <img src="logo.png" alt="Dhiya Temples Logo">
       <div class="brand-title">Dhiya Temples</div>
     </div>
-    <button onclick="toggleDarkMode()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">🌓</button>
+    <button onclick="toggleDarkMode()" style="background:none; border:none; font-size:1.25rem; cursor:pointer; padding:6px; border-radius:10px; background:rgba(255,255,255,0.04); border:1px solid var(--card-border);">🌓</button>
   </header>
 
   <div class="container">
     <!-- HOME PAGE -->
     <div id="page-home" class="page active">
       <h1>🏠 Home</h1>
-      <p style="font-size:0.85rem; color:var(--subtext); margin-bottom:16px;">Welcome to Dhiya Temples Tracker. Tap a module below to get started:</p>
+      <p style="font-size:0.88rem; color:var(--subtext); margin-bottom:18px;">Welcome to Dhiya Temples Tracker. Tap a module below to get started:</p>
 
       <div class="home-grid">
         <div class="home-card" data-target="dashboard" onclick="switchTab('dashboard')">
-          <div class="icon-wrapper">📊</div>
+          <div class="icon-wrapper" style="color:var(--theme-dash);"><i data-lucide="layout-dashboard"></i></div>
           <div class="home-card-title">Dashboard</div>
           <div class="home-card-desc">Budget overview, progress & recent activity</div>
         </div>
 
         <div class="home-card" data-target="projects" onclick="switchTab('projects')">
-          <div class="icon-wrapper">📁</div>
+          <div class="icon-wrapper" style="color:var(--theme-proj);"><i data-lucide="folder-kanban"></i></div>
           <div class="home-card-title">Projects</div>
           <div class="home-card-desc">Manage temple projects & budgets</div>
         </div>
 
         <div class="home-card" data-target="expenses" onclick="switchTab('expenses')">
-          <div class="icon-wrapper">💸</div>
+          <div class="icon-wrapper" style="color:var(--theme-exp);"><i data-lucide="receipt"></i></div>
           <div class="home-card-title">Expenses</div>
           <div class="home-card-desc">Log costs, items & upload receipts</div>
         </div>
 
         <div class="home-card" data-target="reports" onclick="switchTab('reports')">
-          <div class="icon-wrapper">📄</div>
+          <div class="icon-wrapper" style="color:var(--theme-rep);"><i data-lucide="file-text"></i></div>
           <div class="home-card-title">Reports</div>
           <div class="home-card-desc">Export PDF & Excel financial statements</div>
         </div>
 
         <div class="home-card" data-target="settings" style="grid-column: span 2;" onclick="switchTab('settings')">
-          <div class="icon-wrapper">⚙️</div>
+          <div class="icon-wrapper" style="color:var(--theme-set);"><i data-lucide="settings"></i></div>
           <div class="home-card-title">Settings</div>
           <div class="home-card-desc">App updates, data backups & dark mode</div>
         </div>
@@ -205,7 +247,7 @@
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div class="metric-title">Overall Budget Used</div>
-          <div id="dash-progress-text" style="font-weight:800; font-size:0.9rem; color:var(--theme-dash);">0%</div>
+          <div id="dash-progress-text" style="font-weight:800; font-size:0.95rem; color:var(--theme-dash);">0%</div>
         </div>
         <div class="progress-bar-bg">
           <div id="dash-progress-bar" class="progress-bar-fill" style="width:0%;"></div>
@@ -225,7 +267,7 @@
 
       <div class="card">
         <div class="metric-title">Remaining Funds</div>
-        <div class="metric-value" id="dash-remaining" style="color:#10b981; font-size:1.6rem; margin-top:4px;">$0.00</div>
+        <div class="metric-value" id="dash-remaining" style="color:#10b981; font-size:1.65rem; margin-top:6px;">$0.00</div>
       </div>
 
       <div class="card">
@@ -233,6 +275,7 @@
         <div id="dash-recent-list"></div>
       </div>
     </div>
+
     <!-- PROJECTS PAGE -->
     <div id="page-projects" class="page">
       <h1>📁 Projects</h1>
@@ -269,14 +312,14 @@
             </div>
           </div>
           <button type="submit" class="btn btn-proj" style="margin-top:6px;">Save Project</button>
-          <button type="button" id="proj-cancel-btn" class="btn btn-small" style="display:none; margin:10px auto 0 auto; background:transparent; color:var(--subtext);" onclick="resetProjectForm()">Cancel Editing</button>
+          <button type="button" id="proj-cancel-btn" class="btn btn-small" style="display:none; margin:12px auto 0 auto; background:transparent; color:var(--subtext);" onclick="resetProjectForm()">Cancel Editing</button>
         </form>
       </div>
 
       <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
           <h2>Project Directory</h2>
-          <select id="proj-status-filter" style="width:auto; padding:6px 10px; font-size:0.8rem;" onchange="render()">
+          <select id="proj-status-filter" style="width:auto; padding:8px 12px; font-size:0.8rem;" onchange="render()">
             <option value="All">All Statuses</option>
             <option value="Planning">Planning</option>
             <option value="Active">Active</option>
@@ -307,20 +350,33 @@
               <label>Category</label>
               <select id="exp-category">
                 <option value="Materials">Materials</option>
-                <option value="Labor">Labor</option>
-                <option value="Equipment">Equipment</option>
-                <option value="Permits">Permits</option>
+                <option value="Hardware">Hardware</option>
+                <option value="Tools">Tools</option>
+                <option value="Labour">Labour</option>
                 <option value="Miscellaneous">Miscellaneous</option>
               </select>
             </div>
             <div class="form-group">
+              <label>Unit of Measure</label>
+              <select id="exp-uom">
+                <option value="Pcs">Pcs</option>
+                <option value="Meter">Meter</option>
+                <option value="Kg">Kg</option>
+                <option value="Litre">Litre</option>
+                <option value="Hour">Hour</option>
+                <option value="Box">Box</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
               <label>Quantity</label>
               <input type="number" id="exp-qty" value="1" min="1" required>
             </div>
-          </div>
-          <div class="form-group">
-            <label>Unit Cost ($ AUD)</label>
-            <input type="number" id="exp-unit-cost" step="0.01" placeholder="150.00" required>
+            <div class="form-group">
+              <label>Unit Cost ($ AUD)</label>
+              <input type="number" id="exp-unit-cost" step="0.01" placeholder="150.00" required>
+            </div>
           </div>
           <div class="form-group">
             <label>Purchase Link (Optional)</label>
@@ -330,27 +386,27 @@
             <label>Attach Receipt Image (Optional)</label>
             <input type="file" id="exp-receipt-input" accept="image/*" capture="environment">
             <input type="hidden" id="exp-receipt-data">
-            <div id="receipt-preview-status" style="font-size:0.75rem; color:#10b981; margin-top:4px; font-weight:600;"></div>
+            <div id="receipt-preview-status" style="font-size:0.78rem; color:#10b981; margin-top:6px; font-weight:700;"></div>
           </div>
           <button type="submit" class="btn btn-exp" style="margin-top:6px;">Add Expense Item</button>
-          <button type="button" id="exp-cancel-btn" class="btn btn-small" style="display:none; margin:10px auto 0 auto; background:transparent; color:var(--subtext);" onclick="resetExpenseForm()">Cancel Editing</button>
+          <button type="button" id="exp-cancel-btn" class="btn btn-small" style="display:none; margin:12px auto 0 auto; background:transparent; color:var(--subtext);" onclick="resetExpenseForm()">Cancel Editing</button>
         </form>
       </div>
 
       <div class="card">
         <h2>Expense Log</h2>
-        <div class="grid-2" style="margin-bottom:12px;">
+        <div class="grid-2" style="margin-bottom:14px;">
           <select id="expense-cat-filter" onchange="render()">
             <option value="All">All Categories</option>
             <option value="Materials">Materials</option>
-            <option value="Labor">Labor</option>
-            <option value="Equipment">Equipment</option>
-            <option value="Permits">Permits</option>
+            <option value="Hardware">Hardware</option>
+            <option value="Tools">Tools</option>
+            <option value="Labour">Labour</option>
             <option value="Miscellaneous">Miscellaneous</option>
           </select>
-          <input type="text" id="expense-search" placeholder="🔍 Search..." oninput="render()">
+          <input type="text" id="expense-search" placeholder="🔍 Search items..." oninput="render()">
         </div>
-        <div id="category-summary" style="font-size:0.8rem; color:var(--subtext); margin-bottom:10px; font-weight:600;"></div>
+        <div id="category-summary" style="font-size:0.82rem; color:var(--subtext); margin-bottom:12px; font-weight:700;"></div>
         <div id="expenses-list"></div>
       </div>
     </div>
@@ -380,20 +436,20 @@
       <h1>⚙️ Settings</h1>
       <div class="card">
         <h2>App Version & Status</h2>
-        <p style="font-size:0.85rem; color:var(--subtext);">Version: <strong id="app-version-tag">v2.3.0</strong></p>
-        <p id="update-msg" style="font-size:0.8rem; margin-top:6px; color:var(--subtext);"></p>
-        <button id="update-btn" class="btn btn-small" style="margin-top:10px; background:var(--input-bg); border:1px solid var(--input-border); color:var(--text);" onclick="checkForAppUpdate()">Check for App Updates</button>
+        <p style="font-size:0.88rem; color:var(--subtext);">Version: <strong id="app-version-tag">v2.4.0</strong></p>
+        <p id="update-msg" style="font-size:0.82rem; margin-top:6px; color:var(--subtext);"></p>
+        <button id="update-btn" class="btn btn-small" style="margin-top:12px; background:var(--input-bg); border:1px solid var(--input-border); color:var(--text);" onclick="checkForAppUpdate()">Check for App Updates</button>
       </div>
 
       <div class="card">
         <h2>Data Management</h2>
-        <button class="btn btn-small" style="background:var(--input-bg); border:1px solid var(--input-border); color:var(--text); width:100%; margin-bottom:8px;" onclick="manualSave()">💾 Force Manual Save</button>
-        <button class="btn btn-small" style="background:var(--input-bg); border:1px solid var(--input-border); color:var(--text); width:100%; margin-bottom:8px;" onclick="exportData()">📤 Export Backup JSON</button>
-        <label class="btn btn-small" style="background:var(--input-bg); border:1px solid var(--input-border); color:var(--text); width:100%; text-align:center; cursor:pointer;">
+        <button class="btn btn-small" style="background:var(--input-bg); border:1px solid var(--input-border); color:var(--text); width:100%; margin-bottom:10px;" onclick="manualSave()">💾 Force Manual Save</button>
+        <button class="btn btn-small" style="background:var(--input-bg); border:1px solid var(--input-border); color:var(--text); width:100%; margin-bottom:10px;" onclick="exportData()">📤 Export Backup JSON</button>
+        <label class="btn btn-small" style="background:var(--input-bg); border:1px solid var(--input-border); color:var(--text); width:100%; text-align:center; cursor:pointer; display:block; padding:12px;">
           📥 Import Backup JSON
           <input type="file" id="import-file" accept=".json" style="display:none;" onchange="importData(event)">
         </label>
-        <p id="last-saved-time" style="font-size:0.75rem; color:var(--subtext); margin-top:8px; text-align:center;"></p>
+        <p id="last-saved-time" style="font-size:0.78rem; color:var(--subtext); margin-top:10px; text-align:center;"></p>
       </div>
     </div>
   </div>
@@ -401,10 +457,10 @@
   <!-- Hidden Printable PDF Container -->
   <div id="pdf-wrapper" style="display:none; position:absolute; left:-9999px; top:-9999px;">
     <div id="pdf-page-element" style="width:210mm; padding:15mm; background:#fff; color:#000; font-family:Arial, sans-serif;">
-      <h1 id="pdf-title" style="color:#0b2b18; border-bottom:2px solid #dda835; padding-bottom:5px; margin-bottom:5px;"></h1>
+      <h1 id="pdf-title" style="color:#042f1a; border-bottom:2px solid #10b981; padding-bottom:6px; margin-bottom:6px;"></h1>
       <p id="pdf-meta" style="font-size:12px; color:#555; margin-bottom:15px;"></p>
       
-      <div style="display:flex; justify-content:space-between; background:#f4f4f4; padding:10px; border-radius:5px; margin-bottom:15px;">
+      <div style="display:flex; justify-content:space-between; background:#f4f4f4; padding:10px; border-radius:6px; margin-bottom:15px;">
         <div><strong>Total Budget:</strong> <span id="pdf-budget"></span></div>
         <div><strong>Total Expenses:</strong> <span id="pdf-spent"></span></div>
       </div>
@@ -412,10 +468,10 @@
       <h3 id="pdf-table-heading" style="margin-bottom:8px;">Itemized Expense Report</h3>
       <table style="width:100%; border-collapse:collapse; font-size:11px;">
         <thead>
-          <tr style="background:#0b2b18; color:#dda835; text-align:left;">
+          <tr style="background:#042f1a; color:#ffffff; text-align:left;">
             <th style="padding:6px; border:1px solid #ddd;">Description</th>
             <th style="padding:6px; border:1px solid #ddd;">Category</th>
-            <th style="padding:6px; border:1px solid #ddd;">Qty</th>
+            <th style="padding:6px; border:1px solid #ddd;">Qty / UoM</th>
             <th style="padding:6px; border:1px solid #ddd;">Unit Cost</th>
             <th style="padding:6px; border:1px solid #ddd;">Total Cost</th>
           </tr>
@@ -430,17 +486,18 @@
     <img id="modal-receipt-img" class="modal-content" src="" alt="Receipt Preview">
   </div>
 
-  <!-- BOTTOM NAVIGATION BAR (WITH HOME TAB) -->
+  <!-- BOTTOM NAVIGATION BAR -->
   <nav class="nav-bar">
-    <button class="nav-btn active" onclick="switchTab('home', this)"><span class="icon">🏠</span>Home</button>
-    <button class="nav-btn" onclick="switchTab('dashboard', this)"><span class="icon">📊</span>Dashboard</button>
-    <button class="nav-btn" onclick="switchTab('projects', this)"><span class="icon">📁</span>Projects</button>
-    <button class="nav-btn" onclick="switchTab('expenses', this)"><span class="icon">💸</span>Expenses</button>
-    <button class="nav-btn" onclick="switchTab('reports', this)"><span class="icon">📄</span>Reports</button>
-    <button class="nav-btn" onclick="switchTab('settings', this)"><span class="icon">⚙️</span>Settings</button>
+    <button class="nav-btn active" onclick="switchTab('home', this)"><i data-lucide="home"></i>Home</button>
+    <button class="nav-btn" onclick="switchTab('dashboard', this)"><i data-lucide="layout-dashboard"></i>Dashboard</button>
+    <button class="nav-btn" onclick="switchTab('projects', this)"><i data-lucide="folder-kanban"></i>Projects</button>
+    <button class="nav-btn" onclick="switchTab('expenses', this)"><i data-lucide="receipt"></i>Expenses</button>
+    <button class="nav-btn" onclick="switchTab('reports', this)"><i data-lucide="file-text"></i>Reports</button>
+    <button class="nav-btn" onclick="switchTab('settings', this)"><i data-lucide="settings"></i>Settings</button>
   </nav>
+
   <script>
-    const APP_VERSION = "v2.3.0";
+    const APP_VERSION = "v2.4.0";
     let db;
     let data = { projects: [], expenses: [], settings: { darkMode: true } };
     let newWorker = null;
@@ -575,6 +632,15 @@
         loadDB();
       };
       render();
+
+      // Dismiss Launch Splash Screen smoothly after initial load
+      setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+          splash.style.opacity = '0';
+          setTimeout(() => splash.remove(), 500);
+        }
+      }, 900);
     }
 
     function loadDB() {
@@ -612,7 +678,6 @@
       if (el) {
         el.classList.add('active');
       } else {
-        // Sync bottom nav active button if navigated via logo or home grid
         const matchBtn = document.querySelector(`.nav-btn[onclick*="${tabId}"]`);
         if (matchBtn) matchBtn.classList.add('active');
       }
@@ -687,6 +752,7 @@
       const projectId = document.getElementById('exp-project-id').value;
       const desc = document.getElementById('exp-desc').value;
       const qty = parseInt(document.getElementById('exp-qty').value) || 1;
+      const uom = document.getElementById('exp-uom').value;
       const unitCost = parseFloat(document.getElementById('exp-unit-cost').value) || 0;
       const url = document.getElementById('exp-url').value;
       const category = document.getElementById('exp-category').value;
@@ -695,10 +761,10 @@
 
       if (id) {
         const exp = data.expenses.find(x => x.id == id);
-        if (exp) Object.assign(exp, { projectId, desc, qty, unitCost, cost: totalCost, url, category, receipt: receipt || exp.receipt });
+        if (exp) Object.assign(exp, { projectId, desc, qty, uom, unitCost, cost: totalCost, url, category, receipt: receipt || exp.receipt });
       } else {
         data.expenses.unshift({ 
-          id: Date.now(), projectId, desc, qty, unitCost, cost: totalCost, url, category, receipt, date: new Date().toISOString().split('T')[0] 
+          id: Date.now(), projectId, desc, qty, uom, unitCost, cost: totalCost, url, category, receipt, date: new Date().toISOString().split('T')[0] 
         });
       }
       resetExpenseForm();
@@ -713,6 +779,7 @@
       document.getElementById('exp-project-id').value = exp.projectId;
       document.getElementById('exp-desc').value = exp.desc;
       document.getElementById('exp-qty').value = exp.qty || 1;
+      document.getElementById('exp-uom').value = exp.uom || 'Pcs';
       document.getElementById('exp-unit-cost').value = exp.unitCost || exp.cost;
       document.getElementById('exp-url').value = exp.url || '';
       document.getElementById('exp-category').value = exp.category;
@@ -727,6 +794,7 @@
       document.getElementById('expense-form').reset();
       document.getElementById('exp-id').value = '';
       document.getElementById('exp-qty').value = '1';
+      document.getElementById('exp-uom').value = 'Pcs';
       document.getElementById('exp-receipt-data').value = '';
       document.getElementById('receipt-preview-status').textContent = '';
       document.getElementById('exp-form-title').textContent = "Add Expense Item";
@@ -753,7 +821,6 @@
       document.getElementById('receipt-modal').style.display = 'none';
     }
 
-    // NATIVE WEB SHARE API HELPER
     async function shareOrDownloadFile(file) {
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
@@ -802,16 +869,16 @@
         ["Total Budget:", proj.budget],
         ["Category Filter:", selectedCategory],
         [],
-        ["Item Description", "Category", "Quantity", "Unit Cost ($ AUD)", "Total Cost ($ AUD)", "Purchase Link"]
+        ["Item Description", "Category", "Quantity", "UoM", "Unit Cost ($ AUD)", "Total Cost ($ AUD)", "Purchase Link"]
       ];
 
       projExpenses.forEach(e => {
-        reportData.push([e.desc, e.category, e.qty || 1, e.unitCost || e.cost, e.cost, e.url || "N/A"]);
+        reportData.push([e.desc, e.category, e.qty || 1, e.uom || 'Pcs', e.unitCost || e.cost, e.cost, e.url || "N/A"]);
       });
 
       const totalSpent = projExpenses.reduce((acc, e) => acc + (e.cost || 0), 0);
       reportData.push([]);
-      reportData.push(["", "", "", "Total Selected Expenses:", totalSpent]);
+      reportData.push(["", "", "", "", "Total Selected Expenses:", totalSpent]);
 
       const ws = XLSX.utils.aoa_to_sheet(reportData);
       const wb = XLSX.utils.book_new();
@@ -854,7 +921,7 @@
             <tr>
               <td><strong>${e.desc}</strong></td>
               <td>${e.category}</td>
-              <td>${e.qty || 1}</td>
+              <td>${e.qty || 1} ${e.uom || 'Pcs'}</td>
               <td>${formatAUD(e.unitCost)}</td>
               <td>${formatAUD(e.cost)}</td>
             </tr>
@@ -960,14 +1027,14 @@
 
       // Recent Expenses
       const recentEl = document.getElementById('dash-recent-list');
-      recentEl.innerHTML = data.expenses.length === 0 ? '<p style="color:var(--subtext);font-size:0.85rem">No expenses entered yet.</p>' : '';
+      recentEl.innerHTML = data.expenses.length === 0 ? '<p style="color:var(--subtext);font-size:0.88rem">No expenses entered yet.</p>' : '';
       data.expenses.slice(0, 5).forEach(e => {
         const proj = data.projects.find(p => p.id == e.projectId);
         recentEl.innerHTML += `
           <div class="item-row">
             <div>
-              <div><strong>${e.desc}</strong> (${e.qty || 1}x)</div>
-              <div style="font-size:0.75rem; color:var(--subtext); margin-top:2px;">${proj ? proj.title : 'Unassigned'} • <span class="cat-badge">${e.category}</span></div>
+              <div><strong>${e.desc}</strong> (${e.qty || 1} ${e.uom || 'Pcs'})</div>
+              <div style="font-size:0.78rem; color:var(--subtext); margin-top:2px;">${proj ? proj.title : 'Unassigned'} • <span class="cat-badge">${e.category}</span></div>
             </div>
             <div style="font-weight:900; color:var(--theme-dash);">${formatAUD(e.cost)}</div>
           </div>
@@ -979,7 +1046,7 @@
       const filteredProjects = data.projects.filter(p => projStatusFilter === 'All' || p.status === projStatusFilter);
 
       const projListEl = document.getElementById('projects-list');
-      projListEl.innerHTML = filteredProjects.length === 0 ? '<p style="color:var(--subtext);font-size:0.85rem">No projects match this status.</p>' : '';
+      projListEl.innerHTML = filteredProjects.length === 0 ? '<p style="color:var(--subtext);font-size:0.88rem">No projects match this status.</p>' : '';
       
       filteredProjects.forEach(p => {
         const spent = data.expenses.filter(e => e.projectId == p.id).reduce((acc, e) => acc + e.cost, 0);
@@ -1000,13 +1067,13 @@
         projListEl.innerHTML += `
           <div class="item-row">
             <div>
-              <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                 <strong>${p.title}</strong> 
                 <span class="badge badge-${statusClass}">${p.status}</span>
                 ${thresholdBadge}
               </div>
-              <div style="font-size:0.75rem; color:var(--subtext); margin-top:2px;">${p.start} to ${p.target}</div>
-              <div style="font-size:0.85rem; margin-top:4px; font-weight:800;">
+              <div style="font-size:0.78rem; color:var(--subtext); margin-top:3px;">${p.start} to ${p.target}</div>
+              <div style="font-size:0.88rem; margin-top:6px; font-weight:800;">
                 Spent: <span style="color:${spentTextColor};">${formatAUD(spent)}</span> / ${formatAUD(p.budget)}
               </div>
             </div>
@@ -1043,23 +1110,23 @@
       document.getElementById('category-summary').textContent = `Showing ${filteredExpenses.length} items (${formatAUD(catSum)})`;
 
       const expListEl = document.getElementById('expenses-list');
-      expListEl.innerHTML = filteredExpenses.length === 0 ? '<p style="color:var(--subtext);font-size:0.85rem">No matching items found.</p>' : '';
+      expListEl.innerHTML = filteredExpenses.length === 0 ? '<p style="color:var(--subtext);font-size:0.88rem">No matching items found.</p>' : '';
       
       filteredExpenses.forEach(e => {
         const linkHtml = e.url ? `<a href="${e.url}" target="_blank" rel="noopener" class="item-link" onclick="triggerHaptic('light')">🔗 Purchase Link</a>` : '';
-        const receiptHtml = e.receipt ? `<span class="item-link" onclick="openReceiptModal(${e.id})" style="margin-left:8px;">📷 View Receipt</span>` : '';
-        const qtyText = (e.qty && e.qty > 1) ? `<span style="font-size:0.8rem; color:var(--subtext);">(${e.qty} × ${formatAUD(e.unitCost)})</span>` : '';
+        const receiptHtml = e.receipt ? `<span class="item-link" onclick="openReceiptModal(${e.id})" style="margin-left:10px;">📷 View Receipt</span>` : '';
+        const qtyText = `<span style="font-size:0.82rem; color:var(--subtext);">(${e.qty || 1} ${e.uom || 'Pcs'} × ${formatAUD(e.unitCost)})</span>`;
         
         expListEl.innerHTML += `
           <div class="item-row">
             <div>
               <div><strong>${e.desc}</strong> ${qtyText}</div>
-              <div style="font-size:0.75rem; color:var(--subtext); margin-top:2px;"><span class="cat-badge">${e.category}</span></div>
+              <div style="font-size:0.78rem; color:var(--subtext); margin-top:3px;"><span class="cat-badge">${e.category}</span></div>
               <div>${linkHtml} ${receiptHtml}</div>
             </div>
             <div style="text-align:right">
-              <div style="font-weight:900; font-size:1rem; color:var(--text);">${formatAUD(e.cost)}</div>
-              <div class="btn-group" style="margin-top:6px;">
+              <div style="font-weight:900; font-size:1.05rem; color:var(--text);">${formatAUD(e.cost)}</div>
+              <div class="btn-group" style="margin-top:8px;">
                 <button class="btn btn-small" style="background: var(--theme-exp);" onclick="editExpense(${e.id})">Edit</button>
                 <button class="btn btn-danger btn-small" onclick="deleteExpense(${e.id})">✕</button>
               </div>
@@ -1067,9 +1134,15 @@
           </div>
         `;
       });
+
+      // Render modern Lucide icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
     }
 
     initStorage();
   </script>
 </body>
 </html>
+
