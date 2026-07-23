@@ -1,5 +1,5 @@
 // Service Worker Version - Dhiya Temples Tracker
-const CACHE_NAME = 'dhiya-temples-v2.2.0';
+const CACHE_NAME = 'dhiya-cache-v2'; // NEW
 
 // Critical static assets to cache for full offline capability
 const ASSETS_TO_CACHE = [
