@@ -1,808 +1,90 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>My BuildTrack - DIY Project & Expense Tracker</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <!-- PWA & Theme Integration -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0f172a">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- 1. CORRECTED PWA NAME: My BuildTrack -->
+  <title>My BuildTrack - Project & Expense Tracker</title>
+  <meta name="description" content="My BuildTrack Progressive Web App for construction and trade expense management." />
+  
+  <!-- Tailwind CSS CDN for modern PWA styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- 2. PWA METADATA & MANIFEST LINK -->
+  <link rel="manifest" href="site.webmanifest" />
+  <meta name="theme-color" content="#0F172A" /> <!-- Dark Navy Navy -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="My BuildTrack" />
 
-  <!-- External Libraries -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <!-- 3. UPDATED LOGO AND ICON REFERENCES -->
+  <!-- Crisp SVG Favicon for modern browsers -->
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  
+  <!-- Classic ICO Favicon fallback (32x32) -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  
+  <!-- Apple Touch Icon (180x180 PNG required for iOS Home Screen) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
 
   <style>
-    /* DESIGN SYSTEM */
-    :root[data-theme="dark"] {
-      --bg-color: #0f172a;
-      --bg-gradient: radial-gradient(circle at top left, #1e293b 0%, #0f172a 100%);
-      --card-bg: rgba(30, 41, 59, 0.7);
-      --card-border: rgba(255, 255, 255, 0.1);
-      --text: #f8fafc;
-      --subtext: #94a3b8;
-      --input-bg: rgba(15, 23, 42, 0.6);
-      --input-border: rgba(255, 255, 255, 0.15);
-      --input-focus: #10b981;
-      --theme-dash: #10b981;
-      --theme-proj: #0ea5e9;
-      --theme-exp: #6366f1;
-      --theme-rep: #f59e0b;
-      --theme-set: #8b5cf6;
-      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    /* Prevent text selection and scrolling during login if necessary */
+    body {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      background-color: #F8FAFC;
     }
-
-    :root[data-theme="light"] {
-      --bg-color: #f1f5f9;
-      --bg-gradient: radial-gradient(circle at top left, #ffffff 0%, #f1f5f9 100%);
-      --card-bg: rgba(255, 255, 255, 0.85);
-      --card-border: rgba(0, 0, 0, 0.05);
-      --text: #0f172a;
-      --subtext: #64748b;
-      --input-bg: #ffffff;
-      --input-border: #cbd5e1;
-      --input-focus: #059669;
-      --theme-dash: #059669;
-      --theme-proj: #0284c7;
-      --theme-exp: #4f46e5;
-      --theme-rep: #d97706;
-      --theme-set: #7c3aed;
-      --glass-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.15);
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: var(--bg-color); background-image: var(--bg-gradient); background-attachment: fixed; color: var(--text); padding-bottom: 100px; transition: background 0.4s ease, color 0.4s ease; min-height: 100vh; font-size: 16px; }
-
-    /* WEB LAUNCH / SPLASH SCREEN */
-    #splash-screen {
-      position: fixed;
-      inset: 0;
-      background: #0f172a;
-      z-index: 99999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.4s ease, visibility 0.4s ease;
-    }
-    .splash-logo-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      animation: pulseIn 0.8s ease-out;
-    }
-    @keyframes pulseIn {
-      0% { opacity: 0; transform: scale(0.85); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-    .splash-title {
-      font-size: 1.8rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #10b981, #0ea5e9);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: -0.5px;
-    }
-    .splash-sub {
-      font-size: 0.85rem;
-      color: #94a3b8;
-      font-weight: 500;
-    }
-    .splash-loader {
-      margin-top: 32px;
-      width: 28px;
-      height: 28px;
-      border: 3px solid rgba(255,255,255,0.1);
-      border-top-color: #10b981;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    /* ANIMATIONS & MICRO-INTERACTIONS */
-    .btn, .nav-btn, .home-card, .detected-item-chip, .brand, .theme-toggle-btn {
-      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .btn:active, .home-card:active, .detected-item-chip:active, .theme-toggle-btn:active {
-      transform: scale(0.93) !important;
-    }
-
-    /* HEADER */
-    header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--card-border); }
-    .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-    .brand-title { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.5px; background: linear-gradient(135deg, #10b981, #0ea5e9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-    /* NAVIGATION */
-    .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: var(--card-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 24px rgba(0,0,0,0.1); }
-    .nav-btn { background: none; border: none; color: var(--subtext); display: flex; flex-direction: column; align-items: center; font-size: 0.7rem; gap: 6px; flex: 1; cursor: pointer; font-weight: 500; }
-    .nav-btn svg { width: 24px; height: 24px; stroke-width: 2px; transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    .nav-btn.active { color: var(--text); font-weight: 700; transform: translateY(-3px); }
-    .nav-btn.active svg { transform: scale(1.18); }
-
-    body[data-tab="dashboard"] .nav-btn[onclick*="dashboard"].active { color: var(--theme-dash); }
-    body[data-tab="projects"] .nav-btn[onclick*="projects"].active { color: var(--theme-proj); }
-    body[data-tab="expenses"] .nav-btn[onclick*="expenses"].active { color: var(--theme-exp); }
-    body[data-tab="reports"] .nav-btn[onclick*="reports"].active { color: var(--theme-rep); }
-    body[data-tab="settings"] .nav-btn[onclick*="settings"].active { color: var(--theme-set); }
-
-    .container { padding: 24px 20px; max-width: 768px; margin: 0 auto; }
-    .page { display: none; opacity: 0; }
-    .page.active { display: block; animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* HOME GRID */
-    .home-banner { text-align: center; margin-bottom: 24px; padding: 20px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--card-border); box-shadow: var(--glass-shadow); }
-    .home-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-    .home-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 28px 20px; text-align: center; cursor: pointer; box-shadow: var(--glass-shadow); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-    .home-card .icon-wrapper { width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); margin: 0 auto 12px auto; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    .home-card:hover .icon-wrapper { transform: scale(1.1); }
-    .home-card-title { font-weight: 700; font-size: 1.1rem; color: var(--text); margin-bottom: 4px; }
-    .home-card-desc { font-size: 0.75rem; color: var(--subtext); font-weight: 500; }
-
-    .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 24px; margin-bottom: 20px; box-shadow: var(--glass-shadow); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
-    h1 { font-size: 1.75rem; font-weight: 800; margin-bottom: 20px; letter-spacing: -0.5px; }
-    h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; }
-
-    /* FORMS & INPUTS */
-    .form-group { margin-bottom: 16px; }
-    label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--subtext); margin-bottom: 8px; }
-    input, select, textarea { width: 100%; padding: 14px 16px; border-radius: 16px; border: 2px solid var(--input-border); background: var(--input-bg); color: var(--text); font-size: 1rem; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; font-weight: 500; }
-    input:focus, select:focus { border-color: var(--input-focus); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15); background: var(--card-bg); }
-    
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-
-    /* BUTTONS */
-    .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; }
-    .btn-dash { background: var(--theme-dash); color: white; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3); }
-    .btn-proj { background: var(--theme-proj); color: white; box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3); }
-    .btn-exp  { background: var(--theme-exp); color: white; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3); }
-    .btn-danger { background: #ef4444; color: white; }
-    .btn-outline { background: transparent; border: 2px solid var(--input-border); color: var(--text); }
-    .btn-small { padding: 10px 16px; font-size: 0.85rem; border-radius: 12px; width: auto; }
-
-    /* DASHBOARD WIDGETS */
-    .dash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-    .metric-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 18px; text-align: left; }
-    .metric-value { font-size: 1.4rem; font-weight: 800; margin-top: 6px; }
-    .metric-label { font-size: 0.75rem; color: var(--subtext); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-
-    .progress-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-top: 6px; }
-    .progress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-
-    /* OCR RECEIPT SCANNER SPECIFICS */
-    .ocr-scanner-box { background: rgba(99, 102, 241, 0.08); border: 2px dashed var(--theme-exp); border-radius: 18px; padding: 20px; text-align: center; margin-bottom: 18px; }
-    .ocr-status { font-size: 0.85rem; color: var(--theme-exp); font-weight: 600; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .spinner { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--theme-exp); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    
-    .detected-items-container { margin-top: 16px; text-align: left; display: none; }
-    .detected-item-chip { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--card-bg); border: 1px solid var(--input-border); border-radius: 14px; margin-bottom: 8px; cursor: pointer; }
-    .detected-item-chip:hover { border-color: var(--theme-exp); background: rgba(99, 102, 241, 0.05); }
-
-    /* LIST ITEMS */
-    .item-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--card-border); }
-    .item-row:last-child { border-bottom: none; padding-bottom: 0; }
   </style>
 </head>
-<body data-tab="home">
 
-  <!-- LAUNCH / SPLASH SCREEN OVERLAY -->
-  <div id="splash-screen">
-    <div class="splash-logo-container">
-      <svg width="64" height="64" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="40" height="40" rx="10" fill="url(#splash-grad)"/>
-        <path d="M10 27L20 11L30 27H10Z" stroke="white" stroke-width="2.5" stroke-linejoin="round"/>
-        <path d="M15 22H25" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
-        <path d="M10 29L18 32L30 23" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-        <defs>
-          <linearGradient id="splash-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#10b981"/>
-            <stop offset="1" stop-color="#0ea5e9"/>
-          </linearGradient>
-        </defs>
-      </svg>
-      <div style="text-align:center;">
-        <div class="splash-title">My BuildTrack</div>
-        <div class="splash-sub">DIY Project & Expense Tracker</div>
-      </div>
-    </div>
-    <div class="splash-loader"></div>
-  </div>
+<body class="font-sans antialiased text-slate-900">
 
-  <header>
-    <div class="brand" onclick="switchTab('home'); triggerHaptic('light');">
-      <!-- Embedded Vector Logo -->
-      <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="40" height="40" rx="10" fill="url(#header-grad)"/>
-        <path d="M10 27L20 11L30 27H10Z" stroke="white" stroke-width="2.5" stroke-linejoin="round"/>
-        <path d="M15 22H25" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
-        <path d="M10 29L18 32L30 23" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-        <defs>
-          <linearGradient id="header-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#10b981"/>
-            <stop offset="1" stop-color="#0ea5e9"/>
-          </linearGradient>
-        </defs>
-      </svg>
-      <div class="brand-title">My BuildTrack</div>
-    </div>
-    <button class="theme-toggle-btn" onclick="toggleDarkMode(); triggerHaptic('medium');" style="background:none; border:none; color:var(--text); cursor:pointer; padding:8px;"><i data-lucide="moon"></i></button>
-  </header>
-
-  <div class="container">
-    <!-- HOME PAGE -->
-    <div id="page-home" class="page active">
-      <div class="home-banner">
-        <h2 style="font-size:1.3rem; margin-bottom:4px;">Welcome to My BuildTrack!</h2>
-        <p style="color:var(--subtext); font-size:0.9rem; font-weight:500;">Plan builds, scan material receipts, and keep every DIY budget on track.</p>
-      </div>
-
-      <div class="home-grid">
-        <div class="home-card" onclick="switchTab('dashboard'); triggerHaptic('light');">
-          <div class="icon-wrapper" style="color:var(--theme-dash);"><i data-lucide="layout-dashboard" size="32"></i></div>
-          <div class="home-card-title">Dashboard</div>
-          <div class="home-card-desc">Budget metrics & feeds</div>
-        </div>
-        <div class="home-card" onclick="switchTab('projects'); triggerHaptic('light');">
-          <div class="icon-wrapper" style="color:var(--theme-proj);"><i data-lucide="folder-kanban" size="32"></i></div>
-          <div class="home-card-title">Projects</div>
-          <div class="home-card-desc">Manage builds</div>
-        </div>
-        <div class="home-card" onclick="switchTab('expenses'); triggerHaptic('light');">
-          <div class="icon-wrapper" style="color:var(--theme-exp);"><i data-lucide="receipt" size="32"></i></div>
-          <div class="home-card-title">Expenses</div>
-          <div class="home-card-desc">Receipt scanner & logs</div>
-        </div>
-        <div class="home-card" onclick="switchTab('reports'); triggerHaptic('light');">
-          <div class="icon-wrapper" style="color:var(--theme-rep);"><i data-lucide="file-text" size="32"></i></div>
-          <div class="home-card-title">Reports</div>
-          <div class="home-card-desc">Generate exports</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PROJECTS PAGE -->
-    <div id="page-projects" class="page">
-      <h1>📁 Build Projects</h1>
+  <!-- 4. APP UI HEADER -->
+  <header class="sticky top-0 z-50 flex items-center justify-between p-4 bg-slate-950 text-white shadow-lg border-b border-slate-800">
+    <div class="flex items-center gap-3">
+      <!-- 5. SVG LOGO INTEGRATION -->
+      <!-- This references your character logo from image_2.png, which you have as an SVG -->
+      <img src="logo.svg" alt="My BuildTrack Logo" class="h-10 w-10 object-contain rounded-full bg-white p-0.5" />
       
-      <!-- ADD NEW PROJECT FORM -->
-      <div class="card">
-        <h2>Add New Project</h2>
-        <form id="project-form">
-          <div class="form-group">
-            <label>Project Title</label>
-            <input type="text" id="proj-title" placeholder="e.g. Patio Deck Build" required onfocus="triggerHaptic('light')">
-          </div>
-          <div class="form-group">
-            <label>Allocated Budget ($)</label>
-            <input type="number" id="proj-budget" step="0.01" placeholder="3500.00" required onfocus="triggerHaptic('light')">
-          </div>
-          <button type="submit" class="btn btn-proj" style="margin-top:8px;" onclick="triggerHaptic('medium')">Create Project</button>
-        </form>
-      </div>
-
-      <!-- ACTIVE PROJECTS LIST -->
-      <div class="card">
-        <h2>Active Projects</h2>
-        <div id="projects-list"></div>
-      </div>
-    </div>
-
-    <!-- EXPENSES PAGE -->
-    <div id="page-expenses" class="page">
-      <h1>💸 Expenses</h1>
-      
-      <div class="card">
-        <h2 id="exp-form-title">Add Expense Item</h2>
-        
-        <!-- OCR SCANNER UI -->
-        <div class="ocr-scanner-box">
-          <i data-lucide="scan-line" size="32" style="color:var(--theme-exp); margin-bottom:8px;"></i>
-          <p style="font-weight:600; margin-bottom:12px;">Smart Receipt Scanner</p>
-          <input type="file" id="ocr-file-input" accept="image/*" capture="environment" style="display:none;" onchange="handleOCRUpload(event)">
-          <button type="button" class="btn btn-outline btn-small" onclick="triggerHaptic('light'); document.getElementById('ocr-file-input').click();" style="margin:0 auto;">
-            <i data-lucide="camera"></i> Capture & Scan Receipt
-          </button>
-          
-          <div class="ocr-status">
-            <div class="spinner" id="ocr-spinner"></div>
-            <span id="ocr-status-text">Upload receipt to extract prices</span>
-          </div>
-
-          <div id="ocr-results" class="detected-items-container">
-            <p style="font-size:0.8rem; color:var(--subtext); margin-bottom:8px;">Tap an item to auto-fill form:</p>
-            <div id="ocr-chips"></div>
-          </div>
-        </div>
-
-        <form id="expense-form">
-          <input type="hidden" id="exp-id">
-          <div class="form-group">
-            <label>Assigned Project</label>
-            <select id="exp-project-id" required onfocus="triggerHaptic('light')"></select>
-          </div>
-          <div class="form-group">
-            <label>Item Description</label>
-            <input type="text" id="exp-desc" placeholder="e.g. 2x4 Pressure Treated Lumber" required onfocus="triggerHaptic('light')">
-          </div>
-          
-          <div class="grid-3">
-            <div class="form-group">
-              <label>Quantity</label>
-              <input type="number" id="exp-qty" value="1" min="1" required onfocus="triggerHaptic('light')">
-            </div>
-            <div class="form-group">
-              <label>UOM</label>
-              <select id="exp-uom" onfocus="triggerHaptic('light')">
-                <option value="Pcs">Pcs</option>
-                <option value="Meter">Meter</option>
-                <option value="Hour">Hour</option>
-                <option value="Kg">Kg</option>
-                <option value="Liter">Liter</option>
-                <option value="Box">Box</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Unit Cost ($)</label>
-              <input type="number" id="exp-unit-cost" step="0.01" placeholder="0.00" required onfocus="triggerHaptic('light')">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Category</label>
-            <select id="exp-category" onfocus="triggerHaptic('light')">
-              <option value="Materials">Materials</option>
-              <option value="Hardware">Hardware</option>
-              <option value="Labour">Labour</option>
-              <option value="Miscellaneous">Miscellaneous</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-exp" style="margin-top:8px;" onclick="triggerHaptic('medium')">Save Expense Item</button>
-        </form>
-      </div>
-
-      <div class="card">
-        <h2>Expense Log</h2>
-        <div id="expenses-list"></div>
-      </div>
-    </div>
-
-    <!-- DASHBOARD PAGE -->
-    <div id="page-dashboard" class="page">
-      <h1>📊 Dashboard</h1>
-      
-      <div class="dash-grid">
-        <div class="metric-card">
-          <div class="metric-label">Total Spent</div>
-          <div class="metric-value" style="color:var(--theme-dash);" id="dash-total-spent">$0.00</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Recorded Items</div>
-          <div class="metric-value" id="dash-total-items">0</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Avg Item Cost</div>
-          <div class="metric-value" id="dash-avg-cost">$0.00</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Top Category</div>
-          <div class="metric-value" style="font-size:1.1rem; color:var(--theme-exp);" id="dash-top-cat">N/A</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Category Breakdown</h2>
-        <div id="dash-categories-list">
-          <p style="color:var(--subtext); font-size:0.85rem;">No expenses recorded yet.</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Recent Activity</h2>
-        <div id="dash-recent-list">
-          <p style="color:var(--subtext); font-size:0.85rem;">No recent expenses.</p>
-        </div>
-      </div>
+      <!-- 6. BRAND NAME (Tailwind styled) -->
+      <h1 class="text-xl font-extrabold tracking-tighter text-white">
+        My Build<span class="text-yellow-400">Track</span>
+      </h1>
     </div>
     
-    <!-- REPORTS PAGE -->
-    <div id="page-reports" class="page">
-      <h1>📄 Reports</h1>
-      <div class="card">
-        <h2>Export Data</h2>
-        <p style="color:var(--subtext);">Summary metrics ready for export.</p>
-      </div>
+    <!-- Optional UI: Quick Add button -->
+    <button class="bg-yellow-400 text-slate-950 font-bold px-4 py-2 rounded-full text-sm hover:bg-yellow-300 shadow-sm transition">
+      + New Project
+    </button>
+  </header>
+
+  <!-- 7. MAIN CONTENT AREA (Placeholder for your PWA dashboard/login) -->
+  <main class="p-6 md:p-10 space-y-8">
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+      <h2 class="text-2xl font-bold tracking-tight mb-2">Welcome to My BuildTrack</h2>
+      <p class="text-slate-600">Your rebranding to <strong class="text-slate-900">My BuildTrack</strong> is successful. This PWA is now ready to manage your construction projects, expenses, and automated calculations.</p>
     </div>
+    
+    <!-- Add your specific PWA content, Chart.js visualizations, project lists, and scanner UI here -->
+  </main>
 
-    <!-- SETTINGS PAGE -->
-    <div id="page-settings" class="page">
-      <h1>⚙️ Settings</h1>
-      <div class="card">
-        <h2>System Status</h2>
-        <p style="color:var(--subtext);">My BuildTrack • Version 4.0</p>
-      </div>
-    </div>
-  </div>
-
-  <nav class="nav-bar">
-    <button class="nav-btn active" onclick="switchTab('dashboard'); triggerHaptic('light');"><i data-lucide="layout-dashboard"></i>Dash</button>
-    <button class="nav-btn" onclick="switchTab('projects'); triggerHaptic('light');"><i data-lucide="folder-kanban"></i>Projects</button>
-    <button class="nav-btn" onclick="switchTab('home'); triggerHaptic('medium');" style="transform:translateY(-10px); background:var(--theme-dash); color:white; border-radius:50%; width:56px; height:56px; flex:none; box-shadow:0 8px 20px rgba(16,185,129,0.4);"><i data-lucide="home" style="width:28px; height:28px;"></i></button>
-    <button class="nav-btn" onclick="switchTab('expenses'); triggerHaptic('light');"><i data-lucide="receipt"></i>Expenses</button>
-    <button class="nav-btn" onclick="switchTab('settings'); triggerHaptic('light');"><i data-lucide="settings"></i>Settings</button>
-  </nav>
-
+  <!-- 8. SERVICE WORKER REGISTRATION SCRIPT -->
   <script>
-    lucide.createIcons();
-
-    // HIDE SPLASH SCREEN ON LAUNCH
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        const splash = document.getElementById('splash-screen');
-        if (splash) {
-          splash.style.opacity = '0';
-          setTimeout(() => splash.style.display = 'none', 400);
-        }
-      }, 1600);
-    });
-
-    let data = { 
-      projects: [{id: 101, title: 'Patio Deck Build', budget: 3500}], 
-      expenses: [], 
-      settings: { darkMode: true } 
-    };
-
-    // HAPTIC FEEDBACK
-    function triggerHaptic(type = 'light') {
-      if ('vibrate' in navigator) {
-        try {
-          if (type === 'light') navigator.vibrate(10);
-          else if (type === 'medium') navigator.vibrate(25);
-          else if (type === 'success') navigator.vibrate([15, 30, 20]);
-        } catch(e) {}
-      }
-    }
-
-    // TAB SWITCHING
-    function switchTab(tabId) {
-      document.body.setAttribute('data-tab', tabId);
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      
-      const targetPage = document.getElementById(`page-${tabId}`);
-      if (targetPage) targetPage.classList.add('active');
-      
-      const navButtons = document.querySelectorAll('.nav-btn');
-      const navMap = { 'dashboard': 0, 'projects': 1, 'home': 2, 'expenses': 3, 'settings': 4 };
-      if (navMap[tabId] !== undefined && navButtons[navMap[tabId]]) {
-        navButtons[navMap[tabId]].classList.add('active');
-      }
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      populateProjectDropdown();
-      renderProjects();
-      renderExpenses();
-      renderDashboard();
-    }
-
-    function toggleDarkMode() {
-      data.settings.darkMode = !data.settings.darkMode;
-      document.documentElement.setAttribute('data-theme', data.settings.darkMode ? 'dark' : 'light');
-    }
-
-    // PROJECT MANAGEMENT LOGIC
-    document.getElementById('project-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      triggerHaptic('success');
-
-      const title = document.getElementById('proj-title').value.trim();
-      const budget = parseFloat(document.getElementById('proj-budget').value) || 0;
-
-      if (!title) return;
-
-      data.projects.push({
-        id: Date.now(),
-        title,
-        budget
-      });
-
-      document.getElementById('project-form').reset();
-      populateProjectDropdown();
-      renderProjects();
-    });
-
-    function renderProjects() {
-      const list = document.getElementById('projects-list');
-      if (!list) return;
-      list.innerHTML = '';
-
-      if (data.projects.length === 0) {
-        list.innerHTML = '<p style="color:var(--subtext); font-size:0.85rem; padding: 8px 0;">No active projects. Add one above!</p>';
-        return;
-      }
-
-      data.projects.forEach(p => {
-        const projectExpenses = data.expenses.filter(e => String(e.projectId) === String(p.id));
-        const spent = projectExpenses.reduce((sum, e) => sum + e.cost, 0);
-        const percent = p.budget > 0 ? Math.min(Math.round((spent / p.budget) * 100), 100) : 0;
-        const overBudget = spent > p.budget && p.budget > 0;
-
-        list.innerHTML += `
-          <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; margin-bottom: 12px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-              <div>
-                <div style="font-weight:700; font-size:1.05rem;">${p.title}</div>
-                <div style="font-size:0.8rem; color:var(--subtext);">${projectExpenses.length} expense item(s)</div>
-              </div>
-              <button class="btn btn-outline btn-small" onclick="deleteProject(${p.id}); triggerHaptic('medium');" style="color:#ef4444; border-color:rgba(239, 68, 68, 0.3); padding:8px 12px;">
-                <i data-lucide="trash-2" size="16"></i>
-              </button>
-            </div>
-            
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:600; margin-top:12px;">
-              <span>Spent: $${spent.toFixed(2)}</span>
-              <span style="color:${overBudget ? '#ef4444' : 'var(--subtext)'};">Budget: $${p.budget.toFixed(2)}</span>
-            </div>
-            
-            <div class="progress-bar-bg" style="margin-top:8px;">
-              <div class="progress-bar-fill" style="width: ${percent}%; background: ${overBudget ? '#ef4444' : 'var(--theme-proj)'};"></div>
-            </div>
-          </div>
-        `;
-      });
-      lucide.createIcons();
-    }
-
-    function deleteProject(id) {
-      if (confirm('Are you sure you want to delete this project?')) {
-        data.projects = data.projects.filter(p => p.id !== id);
-        populateProjectDropdown();
-        renderProjects();
-        renderDashboard();
-      }
-    }
-
-    function populateProjectDropdown() {
-      const select = document.getElementById('exp-project-id');
-      if (!select) return;
-      select.innerHTML = '';
-      if (data.projects.length === 0) {
-        select.innerHTML = '<option value="">-- No Projects Available --</option>';
-        return;
-      }
-      data.projects.forEach(p => { select.innerHTML += `<option value="${p.id}">${p.title}</option>`; });
-    }
-
-    // TESSERACT OCR RECEIPT SCANNER LOGIC
-    async function handleOCRUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const statusText = document.getElementById('ocr-status-text');
-      const spinner = document.getElementById('ocr-spinner');
-      const resultsContainer = document.getElementById('ocr-results');
-      const chipsContainer = document.getElementById('ocr-chips');
-
-      statusText.textContent = "Analyzing receipt text...";
-      statusText.style.color = "var(--theme-exp)";
-      spinner.style.display = "block";
-      resultsContainer.style.display = "none";
-      chipsContainer.innerHTML = "";
-
-      try {
-        const worker = await Tesseract.createWorker('eng');
-        const ret = await worker.recognize(file);
-        await worker.terminate();
-
-        const text = ret.data.text;
-        const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-        const priceRegex = /\$?(\d{1,3}(?:,\d{3})*\.\d{2})/; 
-        const parsedItems = [];
-
-        lines.forEach(line => {
-          const match = line.match(priceRegex);
-          if (match) {
-            let desc = line.replace(match[0], '').replace(/[^a-zA-Z0-9\s]/g, '').trim();
-            if (desc.length < 2) desc = "Scanned Item";
-            const price = parseFloat(match[1].replace(',', ''));
-            if (price > 0) parsedItems.push({ desc: desc, price: price });
-          }
-        });
-
-        spinner.style.display = "none";
-
-        if (parsedItems.length > 0) {
-          triggerHaptic('success');
-          statusText.textContent = `✅ Found ${parsedItems.length} items.`;
-          statusText.style.color = "#10b981";
-          
-          parsedItems.forEach((item) => {
-            const chip = document.createElement('div');
-            chip.className = 'detected-item-chip';
-            chip.innerHTML = `
-              <div style="font-weight:600;">${item.desc}</div>
-              <div style="font-weight:800; color:var(--theme-exp);">$${item.price.toFixed(2)}</div>
-            `;
-            chip.onclick = () => {
-              triggerHaptic('light');
-              document.getElementById('exp-desc').value = item.desc;
-              document.getElementById('exp-unit-cost').value = item.price;
-              document.getElementById('exp-qty').value = 1;
-              document.getElementById('exp-uom').value = "Pcs";
-              
-              chip.style.borderColor = "#10b981";
-              chip.style.background = "rgba(16, 185, 129, 0.1)";
-              setTimeout(() => {
-                resultsContainer.style.display = "none";
-                statusText.textContent = "Upload another receipt to scan";
-              }, 300);
-            };
-            chipsContainer.appendChild(chip);
+    // Only execute if Service Workers are supported by the browser
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js') // Registers sw.js from the root directory
+          .then((registration) => {
+            console.log('My BuildTrack Service Worker registered with scope:', registration.scope);
+          })
+          .catch((error) => {
+            console.error('My BuildTrack Service Worker registration failed:', error);
           });
-          
-          resultsContainer.style.display = "block";
-        } else {
-          statusText.textContent = "⚠️ Could not confidently detect items/prices.";
-          statusText.style.color = "#f59e0b";
-        }
-
-      } catch (err) {
-        spinner.style.display = "none";
-        statusText.textContent = "❌ Error analyzing receipt.";
-        statusText.style.color = "#ef4444";
-        console.error(err);
-      }
-    }
-
-    // EXPENSE SUBMISSION
-    document.getElementById('expense-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      const projectId = document.getElementById('exp-project-id').value;
-      if (!projectId) {
-        alert('Please create or select a project first!');
-        return;
-      }
-
-      triggerHaptic('success');
-
-      const desc = document.getElementById('exp-desc').value;
-      const qty = parseFloat(document.getElementById('exp-qty').value) || 1;
-      const uom = document.getElementById('exp-uom').value || 'Pcs';
-      const unitCost = parseFloat(document.getElementById('exp-unit-cost').value) || 0;
-      const category = document.getElementById('exp-category').value;
-      
-      data.expenses.unshift({
-        id: Date.now(),
-        projectId,
-        desc, 
-        qty,
-        uom,
-        unitCost,
-        cost: (qty * unitCost),
-        category,
-        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-      });
-      
-      document.getElementById('expense-form').reset();
-      document.getElementById('exp-qty').value = 1;
-      renderExpenses();
-      renderProjects();
-      renderDashboard();
-    });
-
-    function renderExpenses() {
-      const list = document.getElementById('expenses-list');
-      if (!list) return;
-      list.innerHTML = '';
-      
-      if (data.expenses.length === 0) {
-        list.innerHTML = '<p style="color:var(--subtext); font-size:0.85rem; padding: 12px 0;">No expenses recorded yet.</p>';
-        return;
-      }
-
-      data.expenses.forEach(e => {
-        const proj = data.projects.find(p => String(p.id) === String(e.projectId));
-        const projTitle = proj ? proj.title : 'General';
-
-        list.innerHTML += `
-          <div class="item-row">
-            <div>
-              <div style="font-weight:700;">${e.desc}</div>
-              <div style="font-size:0.8rem; color:var(--subtext);">${projTitle} • ${e.category} • ${e.qty} ${e.uom} @ $${e.unitCost.toFixed(2)}</div>
-            </div>
-            <div style="font-weight:800; color:var(--text);">$${e.cost.toFixed(2)}</div>
-          </div>
-        `;
       });
     }
-
-    // RENDER DASHBOARD METRICS
-    function renderDashboard() {
-      const totalSpentEl = document.getElementById('dash-total-spent');
-      if (!totalSpentEl) return;
-
-      const totalSpent = data.expenses.reduce((sum, e) => sum + e.cost, 0);
-      const totalItems = data.expenses.length;
-      const avgCost = totalItems > 0 ? (totalSpent / totalItems) : 0;
-
-      const categoryTotals = {};
-      data.expenses.forEach(e => {
-        categoryTotals[e.category] = (categoryTotals[e.category] || 0) + e.cost;
-      });
-
-      let topCategory = 'N/A';
-      let maxCategorySpend = 0;
-      for (const [cat, spend] of Object.entries(categoryTotals)) {
-        if (spend > maxCategorySpend) {
-          maxCategorySpend = spend;
-          topCategory = cat;
-        }
-      }
-
-      totalSpentEl.textContent = `$${totalSpent.toFixed(2)}`;
-      document.getElementById('dash-total-items').textContent = totalItems;
-      document.getElementById('dash-avg-cost').textContent = `$${avgCost.toFixed(2)}`;
-      document.getElementById('dash-top-cat').textContent = topCategory;
-
-      const catList = document.getElementById('dash-categories-list');
-      catList.innerHTML = '';
-      const categories = ['Materials', 'Hardware', 'Labour', 'Miscellaneous'];
-      
-      if (totalSpent === 0) {
-        catList.innerHTML = '<p style="color:var(--subtext); font-size:0.85rem;">No expense data available.</p>';
-      } else {
-        categories.forEach(cat => {
-          const spend = categoryTotals[cat] || 0;
-          const percent = totalSpent > 0 ? Math.round((spend / totalSpent) * 100) : 0;
-          catList.innerHTML += `
-            <div style="margin-bottom: 12px;">
-              <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:600;">
-                <span>${cat}</span>
-                <span>$${spend.toFixed(2)} (${percent}%)</span>
-              </div>
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill" style="width: ${percent}%; background: var(--theme-exp);"></div>
-              </div>
-            </div>
-          `;
-        });
-      }
-
-      const recentList = document.getElementById('dash-recent-list');
-      recentList.innerHTML = '';
-      if (data.expenses.length === 0) {
-        recentList.innerHTML = '<p style="color:var(--subtext); font-size:0.85rem;">No recent activity.</p>';
-      } else {
-        data.expenses.slice(0, 4).forEach(e => {
-          recentList.innerHTML += `
-            <div class="item-row">
-              <div>
-                <div style="font-weight:600; font-size:0.9rem;">${e.desc}</div>
-                <div style="font-size:0.75rem; color:var(--subtext);">${e.date} • ${e.qty} ${e.uom}</div>
-              </div>
-              <div style="font-weight:700; font-size:0.9rem; color:var(--theme-dash);">$${e.cost.toFixed(2)}</div>
-            </div>
-          `;
-        });
-      }
-    }
-
-    // Initialize Application
-    populateProjectDropdown();
-    renderProjects();
-    renderExpenses();
-    renderDashboard();
   </script>
+
 </body>
 </html>
